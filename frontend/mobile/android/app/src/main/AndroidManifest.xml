@@ -1,4 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+// Source - https://stackoverflow.com/q/65752257
+// Posted by Osama Ayman
+// Retrieved 2026-09-04, License - CC BY-SA 4.0
+
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:label="shreeanna"
         android:name="${applicationName}"
