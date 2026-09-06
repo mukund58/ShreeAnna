@@ -125,7 +125,7 @@ class FarmScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Text(
-                        'ACTIVE',
+                        'VERIFIED',
                         style: TextStyle(
                           fontSize: 8,
                           fontWeight: FontWeight.bold,
@@ -159,7 +159,6 @@ class FarmScreen extends StatelessWidget {
                 icon: Icons.inventory_2_outlined,
               ),
               const SizedBox(height: 10),
-
 
               Row(
                 children: [

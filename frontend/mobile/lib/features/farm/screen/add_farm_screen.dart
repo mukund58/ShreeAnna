@@ -33,7 +33,6 @@ class _AddFarmScreenState extends State<AddFarmScreen> {
   File? _photo;
   Position? _position;
   String _soilType = 'Black Soil';
-  bool _isActive = true;
 
   @override
   void initState() {
@@ -233,7 +232,7 @@ class _AddFarmScreenState extends State<AddFarmScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          'Saved ${_nameController.text} area:${_areaController.text} soil:$_soilType district:${_selectedDistrict ?? ''} taluka:${_selectedTaluka ?? ''} village:${_selectedVillage ?? ''} survey:${_selectedSurveyNumber ?? ''} status:${_isActive ? 'Active' : 'Inactive'} lat:$lat lng:$lng photo:${_photo != null}',
+          'Submitted ${_nameController.text} area:${_areaController.text} soil:$_soilType district:${_selectedDistrict ?? ''} taluka:${_selectedTaluka ?? ''} village:${_selectedVillage ?? ''} survey:${_selectedSurveyNumber ?? ''} status:Pending Verification lat:$lat lng:$lng photo:${_photo != null}',
         ),
       ),
     );
@@ -385,27 +384,64 @@ class _AddFarmScreenState extends State<AddFarmScreen> {
 
               const SizedBox(height: 12),
 
-              const Text(
-                'Farm Status',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-              ),
-              Row(
-                children: [
-                  Switch(
-                    value: _isActive,
-                    onChanged: (v) => setState(() => _isActive = v),
-                    activeColor: ShreeAnnaTheme.primaryGreen,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    _isActive ? 'Active' : 'Inactive',
-                    style: TextStyle(
-                      color: _isActive
-                          ? ShreeAnnaTheme.primaryGreen
-                          : Colors.grey,
+              // const Text(
+              //   'Farm Status',
+              //   style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+              // ),
+              const SizedBox(height: 8),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF4F8EF),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFFD5E3C9)),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: ShreeAnnaTheme.primaryGreen.withValues(
+                          alpha: 0.12,
+                        ),
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      child: const Icon(
+                        Icons.hourglass_top,
+                        color: ShreeAnnaTheme.primaryGreen,
+                        size: 20,
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 12),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Cross Verfication will be done using AnyRoR Website',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: ShreeAnnaTheme.primaryGreen,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            'The FPO will verify your land details using your survey number.',
+                            style: TextStyle(
+                              fontSize: 12,
+                              height: 1.35,
+                              color: Color(0xFF687068),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
 
               const SizedBox(height: 12),

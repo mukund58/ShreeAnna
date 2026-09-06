@@ -13,7 +13,7 @@ class FarmManagementScreen extends StatelessWidget {
     Farm(
       name: 'Green Hill Farm',
       acres: 12,
-      status: 'Active',
+      status: 'Verified',
       soilType: 'Black Soil',
       village: 'Anand',
       district: 'Anand',
@@ -97,7 +97,10 @@ class FarmManagementScreen extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), 
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
                     ),
                   ),
                 ],
@@ -339,18 +342,66 @@ class _FarmCard extends StatelessWidget {
                   ),
                 ),
 
-                const Icon(
-                  Icons.agriculture,
-                  color: ShreeAnnaTheme.primaryGreen,
-                ),
+                // shows verfied Tick if farm is verified
+                if (farm.status.toLowerCase() == 'verified')
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    // decoration: BoxDecoration(
+                    //   color: Colors.grey.shade300,
+                    //   borderRadius: BorderRadius.circular(20),
+                    // ),
+                    child: Row(
+                      children: const [
+                        Icon(
+                          Icons.check_circle,
+                          color: ShreeAnnaTheme.primaryGreen,
+                          size: 20,
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          'VERIFIED',
+                          style: TextStyle(
+                            color: ShreeAnnaTheme.primaryGreen,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                // if farm is not verified show pending text and waitting icon
+                if (farm.status.toLowerCase() != 'verified')
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+
+                    child: Row (
+                      children: const [
+                        Icon(
+                          Icons.access_time,
+                          color: Colors.grey,
+                          size: 20,
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          'PENDING',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
               ],
             ),
 
             const SizedBox(height: 4),
 
             Text(
-              '${farm.acres.toStringAsFixed(0)} Acres • ${farm.status}',
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
+              '${farm.acres.toStringAsFixed(0)} Acres | ${farm.mainCrop}',
+              style: const TextStyle(fontSize: 15, color: Colors.grey),
             ),
 
             const SizedBox(height: 14),
