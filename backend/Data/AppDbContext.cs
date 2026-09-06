@@ -1,6 +1,8 @@
 using backend.Features.Auth.Entities;
 using backend.Features.Farmers.Entities;
 using backend.Features.Farms.Entities;
+
+
 using backend.Features.Fpo.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +22,8 @@ public class AppDbContext : DbContext
     public DbSet<Farmer> Farmers => Set<Farmer>();
 
     public DbSet<Farm> Farms => Set<Farm>();
+    public DbSet<FarmerOtp> FarmerOtps => Set<FarmerOtp>();
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -29,9 +33,37 @@ public class AppDbContext : DbContext
         ConfigureFpoMember(modelBuilder);
         ConfigureFarmer(modelBuilder);
         ConfigureFarm(modelBuilder);
+        ConfigureFarmerOtp(modelBuilder);
     }
+    private static void ConfigureFarmerOtp(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<FarmerOtp>(entity =>
+        {
+            entity.HasKey(x => x.Id);
 
-    private static void ConfigureUser(ModelBuilder modelBuilder)
+            entity.Property(x => x.Phone)
+                .IsRequired()
+                .HasMaxLength(20);
+
+            entity.Property(x => x.OtpHash)
+                .IsRequired();
+
+            entity.Property(x => x.ExpiresAt)
+                .IsRequired();
+
+            entity.Property(x => x.IsUsed)
+                .IsRequired();
+
+            entity.Property(x => x.Attempts)
+                .IsRequired();
+
+            entity.Property(x => x.CreatedAt)
+                .IsRequired();
+
+            entity.HasIndex(x => x.Phone);
+        });
+    }
+        private static void ConfigureUser(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>(entity =>
         {
@@ -55,6 +87,7 @@ public class AppDbContext : DbContext
                 .WithOne(x => x.User)
                 .HasForeignKey<User>(x => x.FpoMemberId)
                 .OnDelete(DeleteBehavior.SetNull);
+
         });
     }
 
@@ -99,6 +132,29 @@ public class AppDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(20);
 
+            entity.Property(x => x.Email)
+                .HasMaxLength(150);
+
+            entity.Property(x => x.Address)
+                .IsRequired()
+                .HasMaxLength(250);
+
+            entity.Property(x => x.District)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(x => x.Taluka)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(x => x.Village)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(x => x.Status)
+                .IsRequired()
+                .HasMaxLength(30);
+
             entity.HasIndex(x => x.FarmerCode)
                 .IsUnique();
         });
@@ -121,9 +177,33 @@ public class AppDbContext : DbContext
             entity.Property(x => x.AreaInAcres)
                 .HasPrecision(10, 2);
 
+            entity.Property(x => x.SoilType)
+                .HasMaxLength(100);
+
             entity.Property(x => x.SurveyNumber)
                 .IsRequired()
                 .HasMaxLength(50);
+
+            entity.Property(x => x.District)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(x => x.Taluka)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(x => x.Village)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(x => x.Latitude)
+                .HasPrecision(10, 7);
+
+            entity.Property(x => x.Longitude)
+                .HasPrecision(10, 7);
+
+            entity.Property(x => x.ImageUrl)
+                .HasMaxLength(500);
 
             entity.Property(x => x.Status)
                 .IsRequired()
