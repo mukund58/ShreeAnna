@@ -151,7 +151,10 @@ public static class DbSeeder
                 ),
                 FarmName = "Ramesh North Farm",
                 AreaInAcres = 3.25m,
+<<<<<<< HEAD
                 MilletType = "Kodo Millet",
+=======
+>>>>>>> d874c80 (Add: data seeding)
                 SoilType = "Black Soil",
                 SurveyNumber = "124/2",
                 District = "Dahod",
