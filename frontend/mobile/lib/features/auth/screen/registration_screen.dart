@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 import '../../../app/theme.dart';
 
@@ -11,60 +14,140 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
   // ------------------------------------------------------------
-  // FORM
+  // FORM KEY
   // ------------------------------------------------------------
-
   final _formKey = GlobalKey<FormState>();
 
   // ------------------------------------------------------------
   // CONTROLLERS
   // ------------------------------------------------------------
-
   final _nameController = TextEditingController();
   final _mobileController = TextEditingController();
   final _addressController = TextEditingController();
-  final _villageController = TextEditingController();
-  final _districtController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _dobController = TextEditingController();
 
   // ------------------------------------------------------------
-  // DROPDOWN VALUE
+  // DROPDOWN DATA
   // ------------------------------------------------------------
+  List<String> _districts = [];
+  List<String> _talukas = [];
+  List<String> _villages = [];
 
-  String? _selectedState;
+  String? _selectedState = 'Gujarat';
   String? _selectedFpo;
+  String? _selectedDistrict;
+  String? _selectedTaluka;
+  String? _selectedVillage;
 
-  final List<String> _states = [
-    'Gujarat',
-    'Maharashtra',
-    'Rajasthan',
-    'Madhya Pradesh',
-  ];
-
-  final List<String> _fpos = [
-    'Kisan Vikas FPO',
-    'Green Valley FPO',
-    'Shree Farmer FPO',
-  ];
-
-  // ------------------------------------------------------------
-  // DISPOSE
-  // ------------------------------------------------------------
+  @override
+  void initState() {
+    super.initState();
+    _loadLandData();
+  }
 
   @override
   void dispose() {
     _nameController.dispose();
     _mobileController.dispose();
+    _emailController.dispose();
     _addressController.dispose();
-    _villageController.dispose();
-    _districtController.dispose();
-
+    _dobController.dispose();
     super.dispose();
   }
 
   // ------------------------------------------------------------
-  // REGISTER
+  // ASSET DATA LOADERS
   // ------------------------------------------------------------
+  Future<void> _loadLandData() async {
+    try {
+      final raw = await rootBundle.loadString(
+        'assets/data/gujarat_land_records.json',
+      );
+      final data = json.decode(raw) as Map<String, dynamic>;
+      final districts = (data['districts'] as List<dynamic>?) ?? [];
 
+      setState(() {
+        _districts = districts
+            .map<String>((d) => d['district_name'] as String)
+            .toList();
+      });
+    } catch (e) {
+      debugPrint('Error loading land data: $e');
+    }
+  }
+
+  Future<void> _populateTalukasForDistrict(String districtName) async {
+    try {
+      final raw = await rootBundle.loadString(
+        'assets/data/gujarat_land_records.json',
+      );
+      final data = json.decode(raw) as Map<String, dynamic>;
+      final districts = (data['districts'] as List<dynamic>?) ?? [];
+
+      final match = districts.firstWhere(
+        (d) => (d['district_name'] as String) == districtName,
+        orElse: () => null,
+      );
+
+      setState(() {
+        if (match != null) {
+          final talukas = (match['talukas'] as List<dynamic>?) ?? [];
+          _talukas = talukas
+              .map<String>((t) => t['taluka_name'] as String)
+              .toList();
+        } else {
+          _talukas = [];
+        }
+      });
+    } catch (e) {
+      debugPrint('Error loading talukas: $e');
+    }
+  }
+
+  Future<void> _populateVillagesForTaluka(
+    String districtName,
+    String talukaName,
+  ) async {
+    try {
+      final raw = await rootBundle.loadString(
+        'assets/data/gujarat_land_records.json',
+      );
+      final data = json.decode(raw) as Map<String, dynamic>;
+      final districts = (data['districts'] as List<dynamic>?) ?? [];
+
+      final match = districts.firstWhere(
+        (d) => (d['district_name'] as String) == districtName,
+        orElse: () => null,
+      );
+
+      setState(() {
+        if (match != null) {
+          final talukas = (match['talukas'] as List<dynamic>?) ?? [];
+          final tal = talukas.firstWhere(
+            (t) => (t['taluka_name'] as String) == talukaName,
+            orElse: () => null,
+          );
+          if (tal != null) {
+            final villages = (tal['villages'] as List<dynamic>?) ?? [];
+            _villages = villages
+                .map<String>((v) => v['village_name'] as String)
+                .toList();
+          } else {
+            _villages = [];
+          }
+        } else {
+          _villages = [];
+        }
+      });
+    } catch (e) {
+      debugPrint('Error loading villages: $e');
+    }
+  }
+
+  // ------------------------------------------------------------
+  // REGISTER HANDLER
+  // ------------------------------------------------------------
   void _registerFarmer() {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -73,17 +156,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     final farmerName = _nameController.text.trim();
     final mobile = _mobileController.text.trim();
     final address = _addressController.text.trim();
-    final village = _villageController.text.trim();
-    final district = _districtController.text.trim();
-    final state = _selectedState!;
-    final fpo = _selectedFpo!;
+    final state = _selectedState ?? '';
+    final district = _selectedDistrict ?? '';
+    final taluka = _selectedTaluka ?? '';
+    final village = _selectedVillage ?? '';
+    final fpo = _selectedFpo ?? '';
 
     debugPrint('Farmer Name: $farmerName');
     debugPrint('Mobile: $mobile');
     debugPrint('Address: $address');
-    debugPrint('Village: $village');
-    debugPrint('District: $district');
     debugPrint('State: $state');
+    debugPrint('District: $district');
+    debugPrint('Taluka: $taluka');
+    debugPrint('Village: $village');
     debugPrint('FPO: $fpo');
 
     ScaffoldMessenger.of(
@@ -92,29 +177,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   // ------------------------------------------------------------
-  // BUILD
+  // BUILD METHOD
   // ------------------------------------------------------------
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ShreeAnnaTheme.background,
 
-      // ----------------------------------------------------------
       // HEADER
-      // ----------------------------------------------------------
       appBar: AppBar(
         backgroundColor: ShreeAnnaTheme.background,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
-
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF394139)),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
         ),
-
         title: const Text(
           'ShreeAnna',
           style: TextStyle(
@@ -125,23 +203,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ),
       ),
 
-      // ----------------------------------------------------------
       // BODY
-      // ----------------------------------------------------------
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(26, 20, 26, 30),
-
           child: Form(
             key: _formKey,
-
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ------------------------------------------------
                 // TITLE
-                // ------------------------------------------------
-
                 const Center(
                   child: Text(
                     'Farmer Registration',
@@ -152,9 +223,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 8),
-
                 const Center(
                   child: Text(
                     'Enter your details to create an account.',
@@ -165,70 +234,75 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
                 const SizedBox(height: 28),
 
-                // ------------------------------------------------
                 // FARMER NAME
-                // ------------------------------------------------
                 _buildLabel('Farmer Name'),
-
                 const SizedBox(height: 7),
-
                 TextFormField(
                   controller: _nameController,
                   textCapitalization: TextCapitalization.words,
                   decoration: _inputDecoration(
-                    hintText: 'John Doe',
+                    hintText: 'Rahul Patel',
                     icon: Icons.person_outline,
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return 'Please enter your name';
                     }
-
                     return null;
                   },
                 ),
 
                 const SizedBox(height: 16),
 
-                // ------------------------------------------------
                 // MOBILE NUMBER
-                // ------------------------------------------------
-                _buildLabel('Mobile No'),
-
+                _buildLabel('Mobile No 10 digits'),
                 const SizedBox(height: 7),
-
                 TextFormField(
                   controller: _mobileController,
                   keyboardType: TextInputType.phone,
                   maxLength: 10,
-
                   decoration: _inputDecoration(
-                    hintText: '+91 (555) 000-0000',
+                    hintText: '1234567890',
                     icon: Icons.phone_outlined,
                   ).copyWith(counterText: ''),
-
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter mobile number';
                     }
-
                     if (value.length != 10) {
                       return 'Enter a valid 10-digit number';
                     }
-
                     return null;
                   },
                 ),
 
                 const SizedBox(height: 16),
 
-                // ------------------------------------------------
-                // ADDRESS
-                // ------------------------------------------------
-                _buildLabel('Address'),
-
+                // EMAIL
+                _buildLabel('Email'),
                 const SizedBox(height: 7),
+                TextFormField(
+                  controller: _emailController,
+                  decoration: _inputDecoration(
+                    hintText: 'rahul@gmail.com',
+                    icon: Icons.email_outlined,
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter your email';
+                    }
+                    if (!value.contains('@')) {
+                      return 'Enter a valid email address';
+                    }
+                    return null;
+                  },
+                ),
 
+                const SizedBox(height: 16),
+
+                // ADDRESS
+                _buildLabel('Address'),
+                const SizedBox(height: 7),
                 TextFormField(
                   controller: _addressController,
                   maxLines: 1,
@@ -240,130 +314,162 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     if (value == null || value.trim().isEmpty) {
                       return 'Please enter your address';
                     }
-
                     return null;
                   },
                 ),
 
                 const SizedBox(height: 16),
 
-                // ------------------------------------------------
-                // VILLAGE
-                // ------------------------------------------------
-                _buildLabel('Village'),
-
-                const SizedBox(height: 7),
-
-                TextFormField(
-                  controller: _villageController,
-                  textCapitalization: TextCapitalization.words,
-                  decoration: _inputDecoration(
-                    hintText: 'Oakridge',
-                    icon: Icons.home_work_outlined,
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please enter your village';
-                    }
-
-                    return null;
-                  },
-                ),
-
-                const SizedBox(height: 16),
-
-                // ------------------------------------------------
-                // DISTRICT
-                // ------------------------------------------------
+                // DISTRICT DROPDOWN
                 _buildLabel('District'),
-
                 const SizedBox(height: 7),
-
-                TextFormField(
-                  controller: _districtController,
-                  textCapitalization: TextCapitalization.words,
+                DropdownButtonFormField<String>(
+                  value: _selectedDistrict,
+                  // Change 1: Dynamic hint text showing the loading status
+                  hint: Text(
+                    _districts.isEmpty
+                        ? 'Loading districts...'
+                        : 'Select District',
+                  ),
                   decoration: _inputDecoration(
-                    hintText: 'Central County',
+                    hintText: '',
                     icon: Icons.map_outlined,
                   ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please enter your district';
-                    }
+                  // Change 2: Ensure items is null when list is empty to let the loading hint show up
+                  items: _districts.isEmpty
+                      ? null
+                      : _districts.map((district) {
+                          return DropdownMenuItem(
+                            value: district,
+                            child: Text(district),
+                          );
+                        }).toList(),
+                  onChanged:
+                      _districts
+                          .isEmpty // Change 3: Keep disabled until data is ready
+                      ? null
+                      : (value) {
+                          if (value != null) {
+                            setState(() {
+                              _selectedDistrict = value;
+                              _selectedTaluka = null;
+                              _selectedVillage = null;
+                              _talukas = [];
+                              _villages = [];
+                            });
+                            _populateTalukasForDistrict(value);
+                          }
+                        },
+                  validator: (value) =>
+                      value == null ? 'Please select a district' : null,
+                ),
 
+                const SizedBox(height: 16),
+
+                // TALUKA
+                _buildLabel('Taluka'),
+                const SizedBox(height: 7),
+                DropdownButtonFormField<String>(
+                  value: _selectedTaluka,
+                  decoration: _inputDecoration(
+                    hintText: 'Select taluka',
+                    icon: Icons.location_city_outlined,
+                  ),
+                  items: _talukas
+                      .map((t) => DropdownMenuItem(value: t, child: Text(t)))
+                      .toList(),
+                  onChanged: (v) async {
+                    if (v == null) return;
+                    setState(() {
+                      _selectedTaluka = v;
+                      _selectedVillage = null;
+                      _villages = [];
+                    });
+                    if (_selectedDistrict != null) {
+                      await _populateVillagesForTaluka(_selectedDistrict!, v);
+                    }
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please select your taluka';
+                    }
                     return null;
                   },
                 ),
 
                 const SizedBox(height: 16),
 
-                // ------------------------------------------------
-                // STATE
-                // ------------------------------------------------
-                _buildLabel('State'),
-
+                // VILLAGE
+                _buildLabel('Village'),
                 const SizedBox(height: 7),
-
                 DropdownButtonFormField<String>(
-                  initialValue: _selectedState,
+                  value: _selectedVillage,
+                  hint: const Text('Select Village'),
                   decoration: _inputDecoration(
-                    hintText: 'Select state',
-                    icon: Icons.landscape_outlined,
+                    hintText: '',
+                    icon: Icons.location_city_outlined,
                   ),
-                  items: _states.map((state) {
-                    return DropdownMenuItem(value: state, child: Text(state));
+                  items: _villages.map((village) {
+                    return DropdownMenuItem(
+                      value: village,
+                      child: Text(village),
+                    );
                   }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedState = value;
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null) {
-                      return 'Please select your state';
-                    }
-
-                    return null;
-                  },
+                  onChanged: _selectedTaluka == null
+                      ? null
+                      : (value) {
+                          if (value != null) {
+                            setState(() {
+                              _selectedVillage = value;
+                            });
+                          }
+                        },
+                  validator: (value) =>
+                      value == null ? 'Please select a village' : null,
                 ),
-
                 const SizedBox(height: 16),
 
-                // ------------------------------------------------
-                // FPO
-                // ------------------------------------------------
-                _buildLabel('Associated FPO'),
-
+                // DATE OF BIRTH
+                _buildLabel('Date of Birth'),
                 const SizedBox(height: 7),
-
-                DropdownButtonFormField<String>(
-                  initialValue: _selectedFpo,
+                TextFormField(
+                  controller: _dobController,
+                  readOnly: true, // <-- Prevents manual typing/keyboard popup
                   decoration: _inputDecoration(
-                    hintText: 'Select FPO',
-                    icon: Icons.business_outlined,
+                    hintText: 'Select Date of Birth',
+                    icon: Icons.calendar_today_outlined,
                   ),
-                  items: _fpos.map((fpo) {
-                    return DropdownMenuItem(value: fpo, child: Text(fpo));
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedFpo = value;
-                    });
+                  onTap: () async {
+                    // Opens the native date picker window
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime(2000), // Default start view
+                      firstDate: DateTime(1920), // Oldest selectable date
+                      lastDate: DateTime.now(), // Users cannot pick a date in the future
+                    );
+
+                    if (pickedDate != null) {
+                      // Formats the date string into Day/Month/Year layout
+                      String formattedDate =
+                          "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
+
+                      setState(() {
+                        _dobController.text =
+                            formattedDate; // Updates the input box UI
+                      });
+                    }
                   },
                   validator: (value) {
-                    if (value == null) {
-                      return 'Please select your FPO';
+                    if (value == null || value.isEmpty) {
+                      return 'Please select your date of birth';
                     }
-
                     return null;
                   },
                 ),
 
                 const SizedBox(height: 30),
 
-                // ------------------------------------------------
                 // REGISTER BUTTON
-                // ------------------------------------------------
                 SizedBox(
                   width: double.infinity,
                   height: 48,
@@ -395,9 +501,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   // ------------------------------------------------------------
-  // LABEL HELPER
+  // HELPERS
   // ------------------------------------------------------------
-
   Widget _buildLabel(String text) {
     return Text(
       text,
@@ -409,33 +514,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  // ------------------------------------------------------------
-  // INPUT DECORATION HELPER
-  // ------------------------------------------------------------
-
   InputDecoration _inputDecoration({
     required String hintText,
     required IconData icon,
   }) {
     return InputDecoration(
       hintText: hintText,
-
       hintStyle: const TextStyle(fontSize: 13, color: Color(0xFF9A9F9A)),
-
       prefixIcon: Icon(icon, size: 19, color: const Color(0xFF596159)),
-
       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(2),
         borderSide: const BorderSide(color: Color(0xFF7E877E)),
       ),
-
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(2),
         borderSide: const BorderSide(color: Color(0xFF7E877E)),
       ),
-
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(2),
         borderSide: const BorderSide(
@@ -443,12 +538,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           width: 1.5,
         ),
       ),
-
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(2),
         borderSide: const BorderSide(color: Colors.red),
       ),
-
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(2),
         borderSide: const BorderSide(color: Colors.red, width: 1.5),

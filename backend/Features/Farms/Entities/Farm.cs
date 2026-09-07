@@ -22,6 +22,12 @@ public class Farm
 
     public string Village { get; set; } = string.Empty;
 
+    public decimal Latitude { get; set; }
+
+    public decimal Longitude { get; set; }
+
+    public string ImageUrl { get; set; } = string.Empty;
+
     public string Status { get; set; } = "Pending Verification";
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
