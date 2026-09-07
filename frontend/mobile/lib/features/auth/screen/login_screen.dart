@@ -262,7 +262,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
               TextButton(
                 onPressed: () {
-                  // Registration navigation will be added later.
+                  // TODO: Registration navigation will be added later.
                 },
                 style: TextButton.styleFrom(
                   padding: EdgeInsets.zero,
