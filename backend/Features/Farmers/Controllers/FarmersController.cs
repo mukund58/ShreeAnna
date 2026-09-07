@@ -2,6 +2,8 @@ using backend.Features.Farmers.DTOs;
 using backend.Features.Farmers.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using backend.Features.Auth;
 
 namespace backend.Features.Farmers.Controllers;
 
@@ -16,8 +18,33 @@ public class FarmersController : ControllerBase
     {
         _farmerService = farmerService;
     }
+    [HttpGet("me")]
+    [Authorize(Roles = Roles.Farmer)]
+    public async Task<ActionResult<FarmerResponse>> GetMe()
+    {
+        var farmerIdClaim = User.FindFirstValue(
+            ClaimTypes.NameIdentifier);
+
+        if (!Guid.TryParse(farmerIdClaim, out var farmerId))
+        {
+            return Unauthorized();
+        }
+
+        var farmer = await _farmerService.GetByIdAsync(farmerId);
+
+        if (farmer is null)
+        {
+            return NotFound(new
+            {
+                message = "Farmer profile not found."
+            });
+        }
+
+        return Ok(farmer);
+    }
 
     [HttpPost]
+    [Authorize(Roles = Roles.FpoManager)]
     public async Task<ActionResult<FarmerResponse>> Create(
         CreateFarmerRequest request)
     {
@@ -30,6 +57,10 @@ public class FarmersController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles =
+    Roles.FpoManager + "," +
+    Roles.ProcurementOfficer + "," +
+    Roles.QualityInspector)]
     public async Task<ActionResult<List<FarmerResponse>>> GetAll()
     {
         var farmers = await _farmerService.GetAllAsync();
@@ -54,6 +85,7 @@ public class FarmersController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = Roles.FpoManager)]
     public async Task<ActionResult<FarmerResponse>> Update(
         Guid id,
         UpdateFarmerRequest request)
@@ -72,6 +104,7 @@ public class FarmersController : ControllerBase
     }
 
     [HttpPatch("{id:guid}/status")]
+    [Authorize(Roles = Roles.FpoManager)]
     public async Task<IActionResult> ChangeStatus(
         Guid id,
         [FromQuery] string status)
