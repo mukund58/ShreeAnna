@@ -10,7 +10,6 @@ using backend.Infrastructure.Authentication;
 using backend.Features.Farmers.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // --------------------------------------------------
 // Database
 // --------------------------------------------------
@@ -117,7 +116,10 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseAuthentication();
 app.UseAuthorization();
