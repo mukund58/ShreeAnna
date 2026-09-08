@@ -16,16 +16,16 @@ Phase 1 — Finish frontend structure
 14. ✅ Buyers
 15. ✅ FPO Management
 16. ✅ Reports
-17. 🔜 Authentication + Role-based UI
+17. ✅ Authentication + Role-based UI
 Phase 2 — Backend
 
 Then:
 
-18. Backend project setup
-19. Database schema
-20. Authentication
-21. User/role authorization
-22. Farmer APIs
+18. ✅ Backend project setup
+19. ✅ Database schema
+20. ✅ Authentication
+21. ✅ User/role authorization
+22. ✅ Farmer APIs
 23. Farm verification APIs
 24. Procurement APIs
 25. Quality APIs
@@ -39,18 +39,5 @@ Then:
 33. Reports APIs
 Phase 3 — Connect frontend
 
-Replace:
-
-console.log(...)
-
-with actual API calls.
-
-Then handle:
-
-Loading
-Errors
-Success
-Validation
-Empty states
-Unauthorized access
-API failures
+34. ✅ login screen
+35.  home screen
