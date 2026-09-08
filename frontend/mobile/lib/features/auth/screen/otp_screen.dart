@@ -1,9 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../home/screens/home_screen.dart';
 import '../../../app/theme.dart';
+import '../services/farmer_auth_api.dart';
+import '../../../core/storage/token_storage.dart';
 
 class OtpScreen extends StatefulWidget {
   final String mobileNumber;
@@ -16,11 +19,15 @@ class OtpScreen extends StatefulWidget {
 
 class _OtpScreenState extends State<OtpScreen> {
   final List<TextEditingController> _controllers = List.generate(
-    4,
+    6,
     (_) => TextEditingController(),
   );
 
-  final List<FocusNode> _focusNodes = List.generate(4, (_) => FocusNode());
+  final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
+  final FarmerAuthApi _farmerAuthApi = FarmerAuthApi();
+
+  bool _isVerifying = false;
+  bool _isResending = false;
 
   Timer? _timer;
 
@@ -66,8 +73,20 @@ class _OtpScreenState extends State<OtpScreen> {
     });
   }
 
+  // ----------------------------------------------------------------
+  // OTP INPUT LOGIC (typing + paste)
+  // ----------------------------------------------------------------
+
   void _onOtpChanged(String value, int index) {
-    if (value.isNotEmpty && index < 3) {
+    // If more than one digit lands here in a single change, it's a paste
+    // (or autofill) event — distribute it across all six boxes instead
+    // of letting it get truncated into just this one.
+    if (value.length > 1) {
+      _distributePastedOtp(value, index);
+      return;
+    }
+
+    if (value.isNotEmpty && index < _focusNodes.length - 1) {
       _focusNodes[index + 1].requestFocus();
     }
 
@@ -76,25 +95,116 @@ class _OtpScreenState extends State<OtpScreen> {
     }
   }
 
+  void _distributePastedOtp(String pasted, int startIndex) {
+    var digits = pasted.replaceAll(RegExp(r'\D'), '');
+
+    if (digits.isEmpty) {
+      _controllers[startIndex].clear();
+      return;
+    }
+
+    if (digits.length > _controllers.length) {
+      digits = digits.substring(0, _controllers.length);
+    }
+
+    // If the pasted string is a full code, always fill from the first box,
+    // even if the paste happened in a middle box. Otherwise fill starting
+    // from wherever the paste occurred.
+    final firstBox = digits.length >= _controllers.length ? 0 : startIndex;
+
+    setState(() {
+      for (var i = 0; i < _controllers.length; i++) {
+        final digitIndex = i - firstBox;
+        if (digitIndex >= 0 && digitIndex < digits.length) {
+          _controllers[i].text = digits[digitIndex];
+        }
+      }
+    });
+
+    final lastFilled = (firstBox + digits.length - 1).clamp(
+      0,
+      _controllers.length - 1,
+    );
+    final nextIndex = (lastFilled + 1).clamp(0, _controllers.length - 1);
+    _focusNodes[nextIndex].requestFocus();
+
+    // Auto-submit once all six boxes are filled from a paste.
+    if (_otp.length == _controllers.length) {
+      _verifyOtp();
+    }
+  }
+
   String get _otp {
     return _controllers.map((controller) => controller.text).join();
   }
 
-  void _verifyOtp() {
-    if (_otp.length != 4) {
+  Future<void> _verifyOtp() async {
+    if (_otp.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter the complete 4-digit OTP')),
+        const SnackBar(content: Text('Please enter the complete 6-digit OTP')),
       );
+
       return;
     }
 
-    // Actual OTP verification will be connected to the backend later.
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('OTP accepted')));
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const HomeScreen()),
-    );
+    if (_isVerifying) {
+      return;
+    }
+
+    setState(() {
+      _isVerifying = true;
+    });
+
+    try {
+      final response = await _farmerAuthApi.verifyOtp(
+        widget.mobileNumber,
+        _otp,
+      );
+
+      debugPrint('Login response: $response');
+
+      final accessToken = response['accessToken'];
+
+      if (accessToken == null ||
+          accessToken is! String ||
+          accessToken.isEmpty) {
+        throw Exception('Login token was not received.');
+      }
+
+      final tokenStorage = TokenStorage();
+
+      await tokenStorage.saveAccessToken(accessToken);
+      final check = await tokenStorage.getAccessToken();
+
+      debugPrint(
+        'Token round-trip check: ${check != null ? "SUCCESS" : "FAILED"}',
+      );
+
+      if (check == null) {
+        throw Exception('Token was not saved to secure storage.');
+      }
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Login successful')));
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isVerifying = false;
+        });
+      }
+    }
   }
 
   void _resendOtp() {
@@ -103,6 +213,10 @@ class _OtpScreenState extends State<OtpScreen> {
     }
 
     // Actual OTP API call will be added later.
+    for (final controller in _controllers) {
+      controller.clear();
+    }
+    _focusNodes.first.requestFocus();
 
     _startTimer();
 
@@ -185,7 +299,7 @@ class _OtpScreenState extends State<OtpScreen> {
               const SizedBox(height: 8),
 
               Text(
-                'We\'ve sent a 4-digit code to your\n'
+                'We\'ve sent a 6-digit code to your\n'
                 'registered mobile number.',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
@@ -202,7 +316,7 @@ class _OtpScreenState extends State<OtpScreen> {
               // --------------------------------------------------
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List.generate(4, (index) => _buildOtpBox(index)),
+                children: List.generate(6, (index) => _buildOtpBox(index)),
               ),
 
               const SizedBox(height: 22),
@@ -214,7 +328,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: _verifyOtp,
+                  onPressed: _isVerifying ? null : _verifyOtp,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ShreeAnnaTheme.primaryGreen,
                     foregroundColor: Colors.white,
@@ -223,10 +337,22 @@ class _OtpScreenState extends State<OtpScreen> {
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  child: const Text(
-                    'Verify & Start  →',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                  ),
+                  child: _isVerifying
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text(
+                          'Verify & Start  →',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
               ),
 
@@ -274,49 +400,47 @@ class _OtpScreenState extends State<OtpScreen> {
 
   Widget _buildOtpBox(int index) {
     return SizedBox(
-      width: 64,
+      width: 48,
       height: 56,
       child: TextField(
         controller: _controllers[index],
         focusNode: _focusNodes[index],
-
         keyboardType: TextInputType.number,
-
         textAlign: TextAlign.center,
-
-        maxLength: 1,
-
-        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-
+        textAlignVertical: TextAlignVertical.center,
+        // NOTE: no maxLength here. Setting maxLength: 1 is what caused the
+        // original bug — Flutter truncates pasted text to 1 char before
+        // onChanged fires, so paste can never fill more than one box.
+        // Digits are restricted via the formatter below instead, and length
+        // is handled manually in _onOtpChanged / _distributePastedOtp.
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Color(0xFF202420),
+        ),
         decoration: InputDecoration(
           counterText: '',
-
           filled: true,
-
-          fillColor: ShreeAnnaTheme.background,
-
+          fillColor: Colors.white,
+          contentPadding: EdgeInsets.zero,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(3),
-            borderSide: const BorderSide(color: Color(0xFF7E877E)),
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Color(0xFFDDE1DD)),
           ),
-
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(3),
-            borderSide: const BorderSide(color: Color(0xFF7E877E)),
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Color(0xFFDDE1DD)),
           ),
-
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(3),
+            borderRadius: BorderRadius.circular(8),
             borderSide: const BorderSide(
               color: ShreeAnnaTheme.primaryGreen,
               width: 1.5,
             ),
           ),
         ),
-
-        onChanged: (value) {
-          _onOtpChanged(value, index);
-        },
+        onChanged: (value) => _onOtpChanged(value, index),
       ),
     );
   }
