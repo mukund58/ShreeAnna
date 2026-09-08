@@ -67,9 +67,11 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAuthService, AuthService>();
+
 builder.Services.AddScoped<IOtpService, OtpService>();
 builder.Services.AddScoped<IFarmerService, FarmerService>();
 builder.Services.AddScoped<IFarmerAuthService, FarmerAuthService>();
+
 // --------------------------------------------------
 // Controllers & Swagger
 // --------------------------------------------------
