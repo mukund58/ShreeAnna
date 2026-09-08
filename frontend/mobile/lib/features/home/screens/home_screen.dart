@@ -8,6 +8,7 @@ import '../../lots/screen/lot_details_screen.dart';
 import '../../farm/screen/farm_management_screen.dart';
 
 import '../../profile/screen/profile_screen.dart';
+import '../../farmers/services/farmer_api.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,11 +19,29 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+  final FarmerApi _farmerApi = FarmerApi();
+
+  Future<void> _loadFarmer() async {
+    try {
+      final farmer = await _farmerApi.getMe();
+
+      debugPrint('Farmer: $farmer');
+    } catch (e) {
+      debugPrint('Failed to load farmer: $e');
+    }
+  }
 
   void _onNavigationItemSelected(int index) {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _loadFarmer();
   }
 
   @override
