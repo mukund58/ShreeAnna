@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 import '../../../app/theme.dart';
 import 'otp_screen.dart';
+import '../services/farmer_auth_api.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,30 +14,69 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _mobileController = TextEditingController();
+  final FarmerAuthApi _farmerAuthApi = FarmerAuthApi();
 
+  bool _isLoading = false;
   @override
   void dispose() {
     _mobileController.dispose();
     super.dispose();
   }
 
-  void _sendOtp() {
-    final mobileNumber = _mobileController.text.trim();
+  Future<void> _sendOtp() async {
+    String mobileNumber = _mobileController.text.trim();
+    // 1. Remove all spaces and the plus symbol first
+    String formattedPhone = mobileNumber.replaceAll(RegExp(r'[\s+]'), '');
+
+    // 2. If it starts with the 91 country code, strip only those first two characters
+    if (formattedPhone.startsWith('91') && formattedPhone.length > 10) {
+      formattedPhone = formattedPhone.substring(2);
+    }
+    // Ensure you only grab the last 10 digits if it's longer
+    if (formattedPhone.length > 10) {
+      formattedPhone = formattedPhone.substring(formattedPhone.length - 10);
+    }
+    mobileNumber = formattedPhone;
 
     if (mobileNumber.length != 10) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter a valid 10-digit mobile number'),
+        SnackBar(
+          content: Text(
+            'Please enter a valid 10-digit mobile number : $mobileNumber',
+          ),
         ),
       );
       return;
     }
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => OtpScreen(mobileNumber: mobileNumber)),
-    );
-    // ScaffoldMessenger.of(context)
-    //     .showSnackBar(const SnackBar(content: Text('Mobile number accepted')));
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await _farmerAuthApi.sendOtp(mobileNumber);
+
+      if (!mounted) return;
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => OtpScreen(mobileNumber: mobileNumber),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -81,25 +122,25 @@ class _LoginScreenState extends State<LoginScreen> {
               // --------------------------------------------------
               // LOGO
               // --------------------------------------------------
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    color: ShreeAnnaTheme.primaryGreen.withValues(alpha: 0.10),
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: ShreeAnnaTheme.primaryGreen.withValues(
-                        alpha: 0.20),
-                        width: 4,
-                    ),
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: ShreeAnnaTheme.primaryGreen.withValues(alpha: 0.10),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: ShreeAnnaTheme.primaryGreen.withValues(alpha: 0.20),
+                    width: 4,
                   ),
-                  child: ClipRRect(borderRadius: BorderRadius.circular(80),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(80),
                   child: SvgPicture.asset(
                     'assets/images/logo.svg',
                     fit: BoxFit.cover,
                   ),
-                  )
                 ),
+              ),
 
               const SizedBox(height: 34),
 
@@ -235,13 +276,22 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
 
-                        child: const Text(
-                          'Send OTP',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        child: _isLoading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Text(
+                                'Send OTP',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                       ),
                     ),
                   ],
