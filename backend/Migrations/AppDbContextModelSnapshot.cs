@@ -210,7 +210,8 @@ namespace backend.Migrations
 
                     b.Property<string>("MilletType")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("SoilType")
                         .IsRequired()

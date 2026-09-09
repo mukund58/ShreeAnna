@@ -5,13 +5,13 @@ class ApiConfig {
 
   static const String verifyFarmerOtp = '$baseUrl/api/auth/farmer/verify-otp';
 
-  // Farmer
   static const String farmerMe = '$baseUrl/api/farmers/me';
 
-  // Farms
-  static String farmerFarms(String farmerId) => '$baseUrl/api/farmers/$farmerId/farms';
+  static String farmerFarms(String farmerId) =>
+      '$baseUrl/api/farmers/$farmerId/farms';
 
   static String farmById(String farmId) => '$baseUrl/api/farms/$farmId';
 
-  static String verifyFarm(String farmId) => '$baseUrl/api/farms/$farmId/verify';
+  static String verifyFarm(String farmId) =>
+      '$baseUrl/api/farms/$farmId/verify';
 }
