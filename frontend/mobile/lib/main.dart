@@ -3,19 +3,35 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'app/theme.dart';
 import 'core/localization/app_language.dart';
+import 'core/network/api_client.dart';
+import 'core/storage/token_storage.dart';
 import 'l10n/generated/app_localizations.dart';
 import 'features/home/screens/home_screen.dart';
+import 'features/auth/screen/welcome_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await AppLanguage.instance.loadLanguage();
 
-  runApp(ShreeAnnaApp(appLanguage: AppLanguage.instance));
+  final tokenStorage = TokenStorage();
+  final token = await tokenStorage.getAccessToken();
+  final isLoggedIn = token != null && token.isNotEmpty;
+
+  runApp(ShreeAnnaApp(
+    appLanguage: AppLanguage.instance,
+    isLoggedIn: isLoggedIn,
+  ));
 }
 
 class ShreeAnnaApp extends StatelessWidget {
-  const ShreeAnnaApp({super.key, required AppLanguage appLanguage});
+  final bool isLoggedIn;
+
+  const ShreeAnnaApp({
+    super.key,
+    required AppLanguage appLanguage,
+    required this.isLoggedIn,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +40,8 @@ class ShreeAnnaApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
+
+          navigatorKey: navigatorKey,
 
           locale: AppLanguage.instance.locale,
 
@@ -36,8 +54,7 @@ class ShreeAnnaApp extends StatelessWidget {
             GlobalCupertinoLocalizations.delegate,
           ],
 
-          // KEEP YOUR EXISTING HOME HERE
-          home: const HomeScreen(),
+          home: isLoggedIn ? const HomeScreen() : const WelcomeScreen(),
         );
       },
     );
