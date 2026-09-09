@@ -1,7 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'app/app.dart';
+import 'app/theme.dart';
+import 'core/localization/app_language.dart';
+import 'l10n/generated/app_localizations.dart';
+import 'features/home/screens/home_screen.dart';
 
-void main() {
-  runApp(const ShreeAnnaApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await AppLanguage.instance.loadLanguage();
+
+  runApp(ShreeAnnaApp(appLanguage: AppLanguage.instance));
+}
+
+class ShreeAnnaApp extends StatelessWidget {
+  const ShreeAnnaApp({super.key, required AppLanguage appLanguage});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: AppLanguage.instance,
+      builder: (context, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+
+          locale: AppLanguage.instance.locale,
+
+          supportedLocales: const [Locale('en'), Locale('gu'), Locale('hi')],
+
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+
+          // KEEP YOUR EXISTING HOME HERE
+          home: const HomeScreen(),
+        );
+      },
+    );
+  }
 }

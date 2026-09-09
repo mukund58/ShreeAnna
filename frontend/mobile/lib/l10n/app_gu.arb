@@ -1,0 +1,45 @@
+{
+  "@@locale": "gu",
+
+  "appName": "શ્રીઅન્ન",
+
+  "myProfile": "મારી પ્રોફાઇલ",
+  "managePersonalInformation": "તમારી વ્યક્તિગત માહિતી અને એકાઉન્ટ મેનેજ કરો.",
+
+  "personalInformation": "વ્યક્તિગત માહિતી",
+  "fullName": "પૂરું નામ",
+  "mobileNumber": "મોબાઇલ નંબર",
+  "email": "ઈમેલ",
+  "address": "સરનામું",
+
+  "location": "સ્થળ",
+  "district": "જિલ્લો",
+  "taluka": "તાલુકો",
+  "village": "ગામ",
+
+  "farmInformation": "ખેતરની માહિતી",
+  "registeredFarms": "નોંધાયેલા ખેતરો",
+  "accountStatus": "એકાઉન્ટ સ્થિતિ",
+  "memberSince": "સભ્ય બન્યા ત્યારથી",
+
+  "account": "એકાઉન્ટ",
+  "changePassword": "પાસવર્ડ બદલો",
+  "notifications": "સૂચનાઓ",
+  "language": "ભાષા",
+
+  "support": "સહાય",
+  "helpSupport": "મદદ અને સહાય",
+  "termsConditions": "નિયમો અને શરતો",
+  "privacyPolicy": "ગોપનીયતા નીતિ",
+
+  "logout": "લૉગઆઉટ",
+  "logoutConfirmation": "શું તમે ખરેખર લૉગઆઉટ કરવા માંગો છો?",
+  "cancel": "રદ કરો",
+
+  "english": "અંગ્રેજી",
+  "gujarati": "ગુજરાતી",
+  "hindi": "હિન્દી",
+
+  "selectLanguage": "ભાષા પસંદ કરો",
+  "languageChanged": "ભાષા સફળતાપૂર્વક બદલાઈ ગઈ."
+}

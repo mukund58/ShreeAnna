@@ -22,6 +22,7 @@ class _ManageFarmScreenState extends State<ManageFarmScreen> {
   late TextEditingController _talukaController;
   late TextEditingController _surveryNumberController;
   String _soilType = 'Black Soil';
+  String? _selectedMilletType;
 
   @override
   void initState() {
@@ -183,7 +184,52 @@ class _ManageFarmScreenState extends State<ManageFarmScreen> {
                         }
                       },
                     ),
+
                     const SizedBox(height: 14),
+                    _buildLabel('Millet Type'),
+                    // Millet / Crop Type
+                    DropdownButtonFormField<String>(
+                      initialValue: _selectedMilletType,
+                      decoration: _inputDecoration(),
+                      items: const [
+                        DropdownMenuItem(
+                          value: 'Pearl Millet',
+                          child: Text('Pearl Millet'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Finger Millet',
+                          child: Text('Finger Millet'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Foxtail Millet',
+                          child: Text('Foxtail Millet'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Little Millet',
+                          child: Text('Little Millet'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Kodo Millet',
+                          child: Text('Kodo Millet'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Barnyard Millet',
+                          child: Text('Barnyard Millet'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Proso Millet',
+                          child: Text('Proso Millet'),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedMilletType = value;
+                        });
+                      },
+                    ),
+
+                    const SizedBox(height: 14),
+
                     _buildLabel('District'),
                     TextField(
                       controller: _districtController,

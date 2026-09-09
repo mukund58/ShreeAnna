@@ -2,144 +2,152 @@ import 'package:flutter/material.dart';
 
 import '../../../app/theme.dart';
 import '../model/farm.dart';
-import 'farm_overview_screen.dart';
+// import 'farm_overview_screen.dart';
 import 'manage_farm_screen.dart';
 import 'add_farm_screen.dart';
+import '../data/farm_api.dart';
+import '../../farmers/services/farmer_api.dart';
+import 'farm_screen.dart';
 
-class FarmManagementScreen extends StatelessWidget {
+class FarmManagementScreen extends StatefulWidget {
   const FarmManagementScreen({super.key});
 
-  static const List<Farm> farms = [
-    Farm(
-      name: 'Green Hill Farm',
-      acres: 12,
-      status: 'Verified',
-      soilType: 'Black Soil',
-      village: 'Anand',
-      district: 'Anand',
-      state: 'Gujarat',
-      totalGrain: 250,
-      cultivatedArea: 4.2,
-      mainCrop: 'Millet',
-      farmSince: 2021,
-      address: '123 Farm Lane',
-    ),
-    Farm(
-      name: 'North Farm',
-      acres: 85,
-      status: 'Pending Verification',
-      soilType: 'Red Soil',
-      village: 'XYZ',
-      district: 'Anand',
-      state: 'Gujarat',
-      totalGrain: 0,
-      cultivatedArea: 0,
-      mainCrop: 'Millet',
-      farmSince: 2024,
-      address: 'North Farm Road',
-    ),
-  ];
+  @override
+  State<FarmManagementScreen> createState() => _FarmManagementScreenState();
+}
+
+class _FarmManagementScreenState extends State<FarmManagementScreen> {
+  final FarmerApi _farmerApi = FarmerApi();
+  final FarmApi _farmApi = FarmApi();
+
+  late Future<List<Farm>> _farmsFuture;
+
+  Future<List<Farm>> _fetchFarms() async {
+    try {
+      final farmer = await _farmerApi.getMe();
+
+      debugPrint('Farmer ID: ${farmer.id}');
+      debugPrint('Farmer: $farmer');
+
+      final farms = await _farmApi.getMyFarms(farmer.id);
+
+      debugPrint('Farms: $farms');
+
+      return farms;
+    } catch (e) {
+      debugPrint('Failed to load farms: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _farmsFuture = _fetchFarms();
+  }
+
+  Future<void> _refreshFarms() async {
+    setState(() {
+      _farmsFuture = _fetchFarms();
+    });
+
+    await _farmsFuture;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ShreeAnnaTheme.background,
-
       appBar: AppBar(
         backgroundColor: ShreeAnnaTheme.background,
         elevation: 0,
+        surfaceTintColor: Colors.transparent,
+
         automaticallyImplyLeading: false,
+
         title: const Text(
           'ShreeAnna',
           style: TextStyle(
             color: ShreeAnnaTheme.primaryGreen,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
       ),
+      body: RefreshIndicator(
+        onRefresh: _refreshFarms,
+        child: FutureBuilder<List<Farm>>(
+          future: _farmsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            children: [
-              // Header
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Expanded(
-                    child: Text(
-                      'Farm\nManagement',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+            if (snapshot.hasError) {
+              return _ErrorView(
+                message: snapshot.error.toString(),
+                onRetry: _refreshFarms,
+              );
+            }
 
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const AddFarmScreen(),
-                        ),
-                      );
-                    },
-                    icon: const Icon(Icons.add, size: 18),
-                    label: const Text(
-                      'ADD NEW\nFARM',
-                      textAlign: TextAlign.center,
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ShreeAnnaTheme.primaryGreen,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            final farms = snapshot.data ?? [];
 
-              const SizedBox(height: 16),
+            if (farms.isEmpty) {
+              return _EmptyFarmView(
+                onAddFarm: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const AddFarmScreen()),
+                  ).then((_) => _refreshFarms());
+                },
+              );
+            }
 
-              // Farm list
-              Expanded(
-                child: ListView.builder(
-                  itemCount: farms.length,
-                  itemBuilder: (context, index) {
-                    final farm = farms[index];
-
-                    return _FarmCard(farm: farm);
-                  },
-                ),
-              ),
-            ],
-          ),
+            return ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(16),
+              itemCount: farms.length,
+              itemBuilder: (context, index) {
+                return _FarmCard(
+                  farm: farms[index],
+                  onFarmChanged: _refreshFarms,
+                );
+              },
+            );
+          },
         ),
+      ),
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const AddFarmScreen()),
+          ).then((_) => _refreshFarms());
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }
 }
 
+// ============================================================
+// FARM CARD
+// ============================================================
+
 class _FarmCard extends StatelessWidget {
   final Farm farm;
+  final Future<void> Function() onFarmChanged;
 
-  const _FarmCard({required this.farm});
+  const _FarmCard({required this.farm, required this.onFarmChanged});
 
   void _openOverview(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => FarmOverviewScreen(farm: farm)),
+      MaterialPageRoute(builder: (_) => FarmScreen(farm: farm, milletType: farm.milletType)),
     );
   }
 
-  void _showFarmSettings(BuildContext context, Farm farm) {
+  void _showFarmSettings(BuildContext context) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -173,7 +181,6 @@ class _FarmCard extends StatelessWidget {
                     'Farm Settings',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-
                   IconButton(
                     onPressed: () {
                       Navigator.pop(context);
@@ -185,7 +192,7 @@ class _FarmCard extends StatelessWidget {
 
               _buildFarmAction(
                 icon: Icons.analytics_outlined,
-                title: 'View Lots for ${farm.name} ',
+                title: 'View Lots for ${farm.farmName}',
                 subtitle: 'View all lots and their details',
                 onTap: () {
                   Navigator.pop(context);
@@ -215,7 +222,7 @@ class _FarmCard extends StatelessWidget {
                 onTap: () {
                   Navigator.pop(context);
 
-                  _showArchiveConfirmation(context, farm);
+                  _showArchiveConfirmation(context);
                 },
               ),
 
@@ -227,7 +234,7 @@ class _FarmCard extends StatelessWidget {
                 onTap: () {
                   Navigator.pop(context);
 
-                  _showArchiveConfirmation(context, farm);
+                  _showArchiveConfirmation(context);
                 },
               ),
             ],
@@ -278,14 +285,14 @@ class _FarmCard extends StatelessWidget {
     );
   }
 
-  void _showArchiveConfirmation(BuildContext context, Farm farm) {
+  void _showArchiveConfirmation(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text('Archive Farm?'),
 
-          content: Text('Are you sure you want to archive ${farm.name}?'),
+          content: Text('Are you sure you want to archive ${farm.farmName}?'),
 
           actions: [
             TextButton(
@@ -315,178 +322,284 @@ class _FarmCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(2),
-        side: BorderSide(color: Colors.grey.shade300),
+      height: 250,
+
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade300),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
 
-      child: Padding(
-        padding: const EdgeInsets.all(14),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
 
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            // Farm name
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    farm.name,
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+            // ==================================================
+            // BACKGROUND IMAGE
+            // ==================================================
 
-                // shows verfied Tick if farm is verified
-                if (farm.status.toLowerCase() == 'verified')
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    // decoration: BoxDecoration(
-                    //   color: Colors.grey.shade300,
-                    //   borderRadius: BorderRadius.circular(20),
-                    // ),
-                    child: Row(
-                      children: const [
-                        Icon(
-                          Icons.check_circle,
+            Positioned.fill(
+              child: farm.imageUrl.isNotEmpty
+                  ? Image.network(
+                      farm.imageUrl,
+                      fit: BoxFit.cover,
+
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
                           color: ShreeAnnaTheme.primaryGreen,
-                          size: 20,
-                        ),
-                        SizedBox(width: 4),
-                        Text(
-                          'VERIFIED',
-                          style: TextStyle(
-                            color: ShreeAnnaTheme.primaryGreen,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
+                          child: const Icon(
+                            Icons.agriculture,
+                            color: Colors.white24,
+                            size: 100,
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                // if farm is not verified show pending text and waitting icon
-                if (farm.status.toLowerCase() != 'verified')
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-
-                    child: Row (
-                      children: const [
-                        Icon(
-                          Icons.access_time,
-                          color: Colors.grey,
-                          size: 20,
-                        ),
-                        SizedBox(width: 4),
-                        Text(
-                          'PENDING',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-              ],
-            ),
-
-            const SizedBox(height: 4),
-
-            Text(
-              '${farm.acres.toStringAsFixed(0)} Acres | ${farm.mainCrop}',
-              style: const TextStyle(fontSize: 15, color: Colors.grey),
-            ),
-
-            const SizedBox(height: 14),
-
-            const Divider(),
-
-            const SizedBox(height: 8),
-
-            // Soil + Village
-            Row(
-              children: [
-                Expanded(
-                  child: _InfoItem(label: 'SOIL TYPE', value: farm.soilType),
-                ),
-                Expanded(
-                  child: _InfoItem(label: 'VILLAGE', value: farm.village),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 12),
-
-            // District + State
-            Row(
-              children: [
-                Expanded(
-                  child: _InfoItem(label: 'DISTRICT', value: farm.district),
-                ),
-                Expanded(
-                  child: _InfoItem(label: 'STATE', value: farm.state),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 16),
-
-            // Buttons
-            Row(
-              children: [
-                OutlinedButton(
-                  onPressed: () => _openOverview(context),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: ShreeAnnaTheme.primaryGreen,
-                    side: const BorderSide(color: ShreeAnnaTheme.primaryGreen),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  child: const Text(
-                    'VIEW FARM',
-                    style: TextStyle(fontSize: 11),
-                  ),
-                ),
-
-                const SizedBox(width: 8),
-
-                OutlinedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            ManageFarmScreen(farmName: farm.name),
+                        );
+                      },
+                    )
+                  : Container(
+                      color: ShreeAnnaTheme.primaryGreen,
+                      child: const Icon(
+                        Icons.agriculture,
+                        color: Colors.white24,
+                        size: 100,
                       ),
-                    );
-                  },
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: ShreeAnnaTheme.primaryGreen,
-                    side: const BorderSide(color: ShreeAnnaTheme.primaryGreen),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(2),
+                    ),
+            ),
+
+            // ==================================================
+            // DARK OVERLAY
+            // ==================================================
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.25),
+                      Colors.black.withValues(alpha: 0.65),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // ==================================================
+            // CONTENT
+            // ==================================================
+            Padding(
+              padding: const EdgeInsets.all(14),
+
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Farm name + status
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          farm.farmName,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(width: 8),
+
+                      // Status
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 9,
+                          vertical: 5,
+                        ),
+
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.90),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+
+                        child: Text(
+                          farm.status.toUpperCase(),
+                          style: TextStyle(
+                            color: farm.status.toLowerCase() == 'verified'
+                                ? ShreeAnnaTheme.primaryGreen
+                                : Colors.orange.shade800,
+                            fontSize: 8,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 4),
+
+                  Text(
+                    farm.farmCode,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: Colors.white70,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                  child: const Text('MANAGE', style: TextStyle(fontSize: 11)),
-                ),
 
-                const Spacer(),
+                  const Spacer(),
 
-                IconButton(
-                  onPressed: () {
-                    _showFarmSettings(context, farm);
-                  },
-                  icon: const Icon(Icons.more_vert),
-                ),
-              ],
+                  // ==================================================
+                  // FARM INFORMATION
+                  // ==================================================
+                  Container(
+                    padding: const EdgeInsets.all(12),
+
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.45),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _InfoItem(
+                                label: 'AREA',
+                                value:
+                                    '${farm.areaInAcres.toStringAsFixed(1)} Acres',
+                                light: true,
+                              ),
+                            ),
+
+                            Expanded(
+                              child: _InfoItem(
+                                label: 'SOIL TYPE',
+                                value: farm.soilType,
+                                light: true,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _InfoItem(
+                                label: 'DISTRICT',
+                                value: farm.district,
+                                light: true,
+                              ),
+                            ),
+
+                            Expanded(
+                              child: _InfoItem(
+                                label: 'VILLAGE',
+                                value: farm.village,
+                                light: true,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  // ==================================================
+                  // BUTTONS
+                  // ==================================================
+                  Row(
+                    children: [
+                      OutlinedButton(
+                        onPressed: () => _openOverview(context),
+
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: ShreeAnnaTheme.primaryGreen
+                              .withValues(alpha: 0.85),
+                          side: const BorderSide(color: Colors.white),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+
+                        child: const Text(
+                          'VIEW FARM',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(width: 8),
+
+                      OutlinedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ManageFarmScreen(farmName: farm.farmName),
+                            ),
+                          );
+                        },
+
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.black.withValues(alpha: 0.35),
+                          side: const BorderSide(color: Colors.white70),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+
+                        child: const Text(
+                          'MANAGE',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+
+                      const Spacer(),
+
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.35),
+                          shape: BoxShape.circle,
+                        ),
+
+                        child: IconButton(
+                          onPressed: () {
+                            _showFarmSettings(context);
+                          },
+                          icon: const Icon(
+                            Icons.more_vert,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -494,12 +607,20 @@ class _FarmCard extends StatelessWidget {
     );
   }
 }
+// ============================================================
+// INFO ITEM
+// ============================================================
 
 class _InfoItem extends StatelessWidget {
   final String label;
   final String value;
+  final bool light;
 
-  const _InfoItem({required this.label, required this.value});
+  const _InfoItem({
+    required this.label,
+    required this.value,
+    this.light = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -508,9 +629,9 @@ class _InfoItem extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 9,
-            color: Colors.grey,
+          style: TextStyle(
+            fontSize: 8,
+            color: light ? Colors.white70 : Colors.grey,
             letterSpacing: 0.5,
           ),
         ),
@@ -519,7 +640,124 @@ class _InfoItem extends StatelessWidget {
 
         Text(
           value,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: light ? Colors.white : const Color(0xFF303530),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ============================================================
+// EMPTY FARM VIEW
+// ============================================================
+
+class _EmptyFarmView extends StatelessWidget {
+  final VoidCallback onAddFarm;
+
+  const _EmptyFarmView({required this.onAddFarm});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      children: [
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.65,
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.agriculture_outlined,
+                  size: 64,
+                  color: Colors.grey.shade400,
+                ),
+
+                const SizedBox(height: 16),
+
+                const Text(
+                  'No farms found',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+
+                const SizedBox(height: 8),
+
+                const Text(
+                  'Add your first farm to get started.',
+                  style: TextStyle(color: Colors.grey),
+                ),
+
+                const SizedBox(height: 20),
+
+                ElevatedButton(
+                  onPressed: onAddFarm,
+                  child: const Text('ADD FARM'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ============================================================
+// ERROR VIEW
+// ============================================================
+
+class _ErrorView extends StatelessWidget {
+  final String message;
+  final Future<void> Function() onRetry;
+
+  const _ErrorView({required this.message, required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      children: [
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.65,
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.error_outline, size: 56, color: Colors.red),
+
+                  const SizedBox(height: 16),
+
+                  const Text(
+                    'Failed to load farms',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  Text(
+                    message,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  ElevatedButton(
+                    onPressed: onRetry,
+                    child: const Text('RETRY'),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ],
     );

@@ -1,0 +1,45 @@
+{
+  "@@locale": "en",
+
+  "appName": "ShreeAnna",
+
+  "myProfile": "My Profile",
+  "managePersonalInformation": "Manage your personal information and account.",
+
+  "personalInformation": "Personal Information",
+  "fullName": "Full Name",
+  "mobileNumber": "Mobile Number",
+  "email": "Email",
+  "address": "Address",
+
+  "location": "Location",
+  "district": "District",
+  "taluka": "Taluka",
+  "village": "Village",
+
+  "farmInformation": "Farm Information",
+  "registeredFarms": "Registered Farms",
+  "accountStatus": "Account Status",
+  "memberSince": "Member Since",
+
+  "account": "Account",
+  "changePassword": "Change Password",
+  "notifications": "Notifications",
+  "language": "Language",
+
+  "support": "Support",
+  "helpSupport": "Help & Support",
+  "termsConditions": "Terms & Conditions",
+  "privacyPolicy": "Privacy Policy",
+
+  "logout": "Logout",
+  "logoutConfirmation": "Are you sure you want to logout?",
+  "cancel": "Cancel",
+
+  "english": "English",
+  "gujarati": "Gujarati",
+  "hindi": "Hindi",
+
+  "selectLanguage": "Select Language",
+  "languageChanged": "Language changed successfully."
+}
