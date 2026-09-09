@@ -1,6 +1,6 @@
-namespace backend.Features.Farms.Entities;
-using backend.Features.Farmers.Entities;
-public class Farm
+namespace backend.Features.Farms.DTOs;
+
+public class FarmResponse
 {
     public Guid Id { get; set; }
 
@@ -30,13 +30,11 @@ public class Farm
 
     public string ImageUrl { get; set; } = string.Empty;
 
-    public string Status { get; set; } = "Pending Verification";
+    public string Status { get; set; } = string.Empty;
 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; }
 
     public DateTime? VerifiedAt { get; set; }
 
     public Guid? VerifiedBy { get; set; }
-
-    public Farmer Farmer { get; set; } = null!;
 }

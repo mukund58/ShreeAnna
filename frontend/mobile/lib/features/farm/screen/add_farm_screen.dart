@@ -29,6 +29,7 @@ class _AddFarmScreenState extends State<AddFarmScreen> {
   String? _selectedTaluka;
   String? _selectedVillage;
   String? _selectedSurveyNumber;
+  String? _selectedMilletType;
 
   File? _photo;
   Position? _position;
@@ -279,7 +280,7 @@ class _AddFarmScreenState extends State<AddFarmScreen> {
 
               // Soil Type
               DropdownButtonFormField<String>(
-                value: _soilType,
+                initialValue: _soilType,
                 decoration: const InputDecoration(labelText: 'Soil Type'),
                 items: const [
                   DropdownMenuItem(
@@ -299,8 +300,60 @@ class _AddFarmScreenState extends State<AddFarmScreen> {
 
               const SizedBox(height: 12),
 
+              const SizedBox(height: 12),
+
+              // Millet Type
               DropdownButtonFormField<String>(
-                value: _selectedDistrict,
+                initialValue: _selectedMilletType,
+                decoration: const InputDecoration(labelText: 'Millet Type'),
+                items: [
+                  DropdownMenuItem(
+                    value: 'Sorghum',
+                    child: Text('Sorghum (Jowar)'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Pearl Millet',
+                    child: Text('Pearl Millet (Bajra)'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Finger Millet',
+                    child: Text('Finger Millet (Ragi)'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Foxtail Millet',
+                    child: Text('Foxtail Millet (Kangni)'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Little Millet',
+                    child: Text('Little Millet (Kutki)'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Kodo Millet',
+                    child: Text('Kodo Millet (Varagu)'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Barnyard Millet',
+                    child: Text('Barnyard Millet (Sanwa)'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Proso Millet',
+                    child: Text('Proso Millet (Chena)'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Browntop Millet',
+                    child: Text('Browntop Millet (Korralu)'),
+                  ),
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    _selectedMilletType = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 12),
+
+              DropdownButtonFormField<String>(
+                initialValue: _selectedDistrict,
                 decoration: const InputDecoration(labelText: 'District'),
                 items: _districts
                     .map((d) => DropdownMenuItem(value: d, child: Text(d)))
