@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 import '../../../app/theme.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class ManageFarmScreen extends StatefulWidget {
   final String farmName;
@@ -91,8 +92,9 @@ class _ManageFarmScreenState extends State<ManageFarmScreen> {
   }
 
   void _saveChanges() {
+    final l10n = AppLocalizations.of(context)!;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Farm changes saved successfully')),
+      SnackBar(content: Text(l10n.save)),
     );
 
     Navigator.pop(context);
@@ -100,6 +102,7 @@ class _ManageFarmScreenState extends State<ManageFarmScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: ShreeAnnaTheme.background,
       appBar: AppBar(
@@ -111,9 +114,9 @@ class _ManageFarmScreenState extends State<ManageFarmScreen> {
             Navigator.pop(context);
           },
         ),
-        title: const Text(
-          'ShreeAnna',
-          style: TextStyle(
+        title: Text(
+          l10n.appName,
+          style: const TextStyle(
             color: ShreeAnnaTheme.primaryGreen,
             fontWeight: FontWeight.bold,
           ),
@@ -125,9 +128,9 @@ class _ManageFarmScreenState extends State<ManageFarmScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Manage Farm',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              Text(
+                '${l10n.manage} ${l10n.farm}',
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 4),
               Text(
@@ -145,20 +148,20 @@ class _ManageFarmScreenState extends State<ManageFarmScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildLabel('Farm Name'),
+                    _buildLabel(l10n.farmName),
                     TextField(
                       controller: _farmNameController,
                       decoration: _inputDecoration(),
                     ),
                     const SizedBox(height: 14),
-                    _buildLabel('Total Area (Acres)'),
+                    _buildLabel(l10n.area),
                     TextField(
                       controller: _areaController,
                       keyboardType: TextInputType.number,
                       decoration: _inputDecoration(),
                     ),
                     const SizedBox(height: 14),
-                    _buildLabel('Soil Type'),
+                    _buildLabel(l10n.soilType),
                     DropdownButtonFormField<String>(
                       initialValue: _soilType,
                       decoration: _inputDecoration(),
@@ -186,39 +189,39 @@ class _ManageFarmScreenState extends State<ManageFarmScreen> {
                     ),
 
                     const SizedBox(height: 14),
-                    _buildLabel('Millet Type'),
+                    _buildLabel(l10n.milletType),
                     // Millet / Crop Type
                     DropdownButtonFormField<String>(
                       initialValue: _selectedMilletType,
                       decoration: _inputDecoration(),
-                      items: const [
+                      items: [
                         DropdownMenuItem(
                           value: 'Pearl Millet',
-                          child: Text('Pearl Millet'),
+                          child: Text(l10n.milletPearl),
                         ),
                         DropdownMenuItem(
                           value: 'Finger Millet',
-                          child: Text('Finger Millet'),
+                          child: Text(l10n.milletFinger),
                         ),
                         DropdownMenuItem(
                           value: 'Foxtail Millet',
-                          child: Text('Foxtail Millet'),
+                          child: Text(l10n.milletFoxtail),
                         ),
                         DropdownMenuItem(
                           value: 'Little Millet',
-                          child: Text('Little Millet'),
+                          child: Text(l10n.milletLittle),
                         ),
                         DropdownMenuItem(
                           value: 'Kodo Millet',
-                          child: Text('Kodo Millet'),
+                          child: Text(l10n.milletKodo),
                         ),
                         DropdownMenuItem(
                           value: 'Barnyard Millet',
-                          child: Text('Barnyard Millet'),
+                          child: Text(l10n.milletBarnyard),
                         ),
                         DropdownMenuItem(
                           value: 'Proso Millet',
-                          child: Text('Proso Millet'),
+                          child: Text(l10n.milletProso),
                         ),
                       ],
                       onChanged: (value) {
@@ -230,27 +233,27 @@ class _ManageFarmScreenState extends State<ManageFarmScreen> {
 
                     const SizedBox(height: 14),
 
-                    _buildLabel('District'),
+                    _buildLabel(l10n.district),
                     TextField(
                       controller: _districtController,
                       decoration: _inputDecoration(),
                     ),
                     const SizedBox(height: 16),
-                    _buildLabel('Taluka'),
+                    _buildLabel(l10n.taluka),
                     TextField(
                       controller: _talukaController,
                       decoration: _inputDecoration(),
                     ),
                     const SizedBox(height: 16),
-                    _buildLabel('Village'),
+                    _buildLabel(l10n.village),
                     TextField(
                       controller: _villageController,
                       decoration: _inputDecoration(),
                     ),
                     const SizedBox(height: 16),
-                    const Text(
-                      'Farm Status',
-                      style: TextStyle(
+                    Text(
+                      l10n.accountStatus,
+                      style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
                       ),
@@ -318,9 +321,9 @@ class _ManageFarmScreenState extends State<ManageFarmScreen> {
                       borderRadius: BorderRadius.circular(6),
                     ),
                   ),
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  child: Text(
+                    l10n.cancel,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -337,9 +340,9 @@ class _ManageFarmScreenState extends State<ManageFarmScreen> {
                       borderRadius: BorderRadius.circular(6),
                     ),
                   ),
-                  child: const Text(
-                    'Save Changes',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  child: Text(
+                    l10n.save,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
               ),

@@ -10,6 +10,7 @@ using backend.Infrastructure.Authentication;
 using backend.Features.Farmers.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.UseUrls("http://0.0.0.0:5066");
 // --------------------------------------------------
 // Database
 // --------------------------------------------------
@@ -116,7 +117,10 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthentication();
 app.UseAuthorization();

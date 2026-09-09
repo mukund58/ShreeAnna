@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/theme.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class SellMilletScreen extends StatefulWidget {
   const SellMilletScreen({super.key});
@@ -81,13 +82,14 @@ class _SellMilletScreenState extends State<SellMilletScreen> {
   // ============================================================
 
   void _submitLot() {
+    final l10n = AppLocalizations.of(context)!;
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
     if (_harvestDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select the harvest date')),
+        SnackBar(content: Text(l10n.pleaseSelectHarvestDate)),
       );
 
       return;
@@ -106,7 +108,7 @@ class _SellMilletScreenState extends State<SellMilletScreen> {
 
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Lot submitted successfully')));
+    ).showSnackBar(SnackBar(content: Text(l10n.lotSubmittedSuccessfully)));
   }
 
   // ============================================================
@@ -115,6 +117,7 @@ class _SellMilletScreenState extends State<SellMilletScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: ShreeAnnaTheme.background,
 
@@ -160,9 +163,9 @@ class _SellMilletScreenState extends State<SellMilletScreen> {
                 // INTRO
                 // ------------------------------------------------
 
-                const Text(
-                  'This information will be submitted to your FPO for quality inspection.',
-                  style: TextStyle(fontSize: 11, color: Color(0xFF687068)),
+                Text(
+                  l10n.sellMilletSubtitle,
+                  style: const TextStyle(fontSize: 11, color: Color(0xFF687068)),
                 ),
 
                 const SizedBox(height: 24),
@@ -170,14 +173,14 @@ class _SellMilletScreenState extends State<SellMilletScreen> {
                 // ------------------------------------------------
                 // FARM
                 // ------------------------------------------------
-                _buildLabel('Select Farm'),
+                _buildLabel(l10n.selectFarm),
 
                 const SizedBox(height: 7),
 
                 DropdownButtonFormField<String>(
                   initialValue: _selectedFarm,
                   decoration: _inputDecoration(
-                    hintText: 'Choose a farm...',
+                    hintText: l10n.chooseFarm,
                     icon: Icons.agriculture_outlined,
                   ),
                   items: _farms.map((farm) {
@@ -190,7 +193,7 @@ class _SellMilletScreenState extends State<SellMilletScreen> {
                   },
                   validator: (value) {
                     if (value == null) {
-                      return 'Please select a farm';
+                      return l10n.pleaseSelectFarm;
                     }
 
                     return null;
@@ -202,14 +205,14 @@ class _SellMilletScreenState extends State<SellMilletScreen> {
                 // ------------------------------------------------
                 // MILLET TYPE
                 // ------------------------------------------------
-                _buildLabel('Millet Type'),
+                _buildLabel(l10n.milletType),
 
                 const SizedBox(height: 7),
 
                 DropdownButtonFormField<String>(
                   initialValue: _selectedMillet,
                   decoration: _inputDecoration(
-                    hintText: 'Choose millet type...',
+                    hintText: l10n.chooseMilletType,
                     icon: Icons.grass_outlined,
                   ),
                   items: _milletTypes.map((millet) {
@@ -222,7 +225,7 @@ class _SellMilletScreenState extends State<SellMilletScreen> {
                   },
                   validator: (value) {
                     if (value == null) {
-                      return 'Please select millet type';
+                      return l10n.pleaseSelectMilletType;
                     }
 
                     return null;
@@ -234,7 +237,7 @@ class _SellMilletScreenState extends State<SellMilletScreen> {
                 // ------------------------------------------------
                 // QUANTITY
                 // ------------------------------------------------
-                _buildLabel('Estimated Quantity (kg)'),
+                _buildLabel(l10n.quantityKg),
 
                 const SizedBox(height: 7),
 
@@ -249,13 +252,13 @@ class _SellMilletScreenState extends State<SellMilletScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Please enter estimated quantity';
+                      return l10n.pleaseEnterQuantity;
                     }
 
                     final quantity = double.tryParse(value);
 
                     if (quantity == null || quantity <= 0) {
-                      return 'Enter a valid quantity';
+                      return l10n.enterValidQuantity;
                     }
 
                     return null;
@@ -267,7 +270,7 @@ class _SellMilletScreenState extends State<SellMilletScreen> {
                 // ------------------------------------------------
                 // HARVEST DATE
                 // ------------------------------------------------
-                _buildLabel('Harvest Date'),
+                _buildLabel(l10n.harvestDate),
 
                 const SizedBox(height: 7),
 
@@ -298,7 +301,7 @@ class _SellMilletScreenState extends State<SellMilletScreen> {
                 // ------------------------------------------------
                 // DESCRIPTION
                 // ------------------------------------------------
-                _buildLabel('Description (Optional)'),
+                _buildLabel(l10n.descriptionOptional),
 
                 const SizedBox(height: 7),
 
@@ -306,7 +309,7 @@ class _SellMilletScreenState extends State<SellMilletScreen> {
                   controller: _descriptionController,
                   maxLines: 4,
                   decoration: _inputDecoration(
-                    hintText: 'Add any specific details about this lot...',
+                    hintText: l10n.descriptionHint,
                     icon: Icons.notes_outlined,
                   ),
                 ),
@@ -322,9 +325,9 @@ class _SellMilletScreenState extends State<SellMilletScreen> {
                   child: ElevatedButton.icon(
                     onPressed: () => _showSubmitLotConfirmation(context),
                     icon: const Icon(Icons.lock_outline, size: 16),
-                    label: const Text(
-                      'SUBMIT LOT',
-                      style: TextStyle(
+                    label: Text(
+                      l10n.submitLot,
+                      style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
@@ -422,22 +425,21 @@ class _SellMilletScreenState extends State<SellMilletScreen> {
   }
 
   void _showSubmitLotConfirmation(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Confirm Submission'),
+          title: Text(l10n.confirmSubmission),
 
-          content: const Text(
-            'Are you sure you want to submit this lot for quality inspection?',
-          ),
+          content: Text(l10n.confirmSubmitMessage),
 
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
 
             ElevatedButton(
@@ -450,7 +452,7 @@ class _SellMilletScreenState extends State<SellMilletScreen> {
                 backgroundColor: ShreeAnnaTheme.primaryGreen,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Submit'),
+              child: Text(l10n.submit),
             ),
           ],
         );

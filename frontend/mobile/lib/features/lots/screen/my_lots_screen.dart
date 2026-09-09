@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/theme.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import 'sell_millet_screen.dart';
 import 'lot_details_screen.dart';
 
@@ -9,6 +10,7 @@ class MyLotsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: ShreeAnnaTheme.background,
 
@@ -18,9 +20,9 @@ class MyLotsScreen extends StatelessWidget {
         surfaceTintColor: Colors.transparent,
         automaticallyImplyLeading: false,
 
-        title: const Text(
-          'ShreeAnna',
-          style: TextStyle(
+        title: Text(
+          l10n.appName,
+          style: const TextStyle(
             color: ShreeAnnaTheme.primaryGreen,
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -34,16 +36,12 @@ class MyLotsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // --------------------------------------------------
-              // HEADER
-              // --------------------------------------------------
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'My Lots',
-                    style: TextStyle(
+                  Text(
+                    l10n.myLots,
+                    style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF202420),
@@ -62,9 +60,9 @@ class MyLotsScreen extends StatelessWidget {
                         );
                       },
                       icon: const Icon(Icons.add, size: 17),
-                      label: const Text(
-                        'Submit New Lot',
-                        style: TextStyle(
+                      label: Text(
+                        l10n.submitNewLot,
+                        style: const TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
                         ),
@@ -85,9 +83,9 @@ class MyLotsScreen extends StatelessWidget {
 
               const SizedBox(height: 5),
 
-              const Text(
-                'Manage and track your submitted harvest lots.',
-                style: TextStyle(fontSize: 11, color: Color(0xFF687068)),
+              Text(
+                l10n.manageAndTrackLots,
+                style: const TextStyle(fontSize: 11, color: Color(0xFF687068)),
               ),
 
               const SizedBox(height: 18),
@@ -262,14 +260,14 @@ class MyLotsScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: _buildDetail(
-                  label: 'Estimated Quantity',
+                  label: AppLocalizations.of(context)!.estimatedQuantity,
                   value: quantity,
                 ),
               ),
 
               Expanded(
                 child: _buildDetail(
-                  label: 'Submission Date',
+                  label: AppLocalizations.of(context)!.submissionDate,
                   value: submissionDate,
                 ),
               ),
@@ -306,9 +304,9 @@ class MyLotsScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              child: const Text(
-                'View Details',
-                style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+              child: Text(
+                AppLocalizations.of(context)!.viewDetails,
+                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
               ),
             ),
           ),

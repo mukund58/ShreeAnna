@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/theme.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import 'procurement_agreement_screen.dart';
 import 'quality_results_screen.dart';
 import 'quality_certificate_screen.dart';
@@ -26,6 +27,7 @@ class LotDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: ShreeAnnaTheme.background,
 
@@ -41,9 +43,9 @@ class LotDetailsScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Color(0xFF394139)),
         ),
 
-        title: const Text(
-          'Lot Details',
-          style: TextStyle(
+        title: Text(
+          l10n.lotDetails,
+          style: const TextStyle(
             color: ShreeAnnaTheme.primaryGreen,
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -96,9 +98,9 @@ class LotDetailsScreen extends StatelessWidget {
 
                     Row(
                       children: [
-                        Expanded(child: _buildInfo('Quantity', quantity)),
+                        Expanded(child: _buildInfo(l10n.quantity, quantity)),
                         Expanded(
-                          child: _buildInfo('Submitted', submissionDate),
+                          child: _buildInfo(l10n.submitted, submissionDate),
                         ),
                       ],
                     ),
@@ -132,9 +134,9 @@ class LotDetailsScreen extends StatelessWidget {
               // ==================================================
               // PROCUREMENT JOURNEY
               // ==================================================
-              const Text(
-                'Procurement Journey',
-                style: TextStyle(
+              Text(
+                l10n.procurementJourney,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF202420),
@@ -144,16 +146,16 @@ class LotDetailsScreen extends StatelessWidget {
               const SizedBox(height: 14),
 
               _buildTimelineItem(
-                title: 'Lot Submitted',
-                subtitle: 'Your lot has been submitted to the FPO.',
+                title: l10n.lotSubmitted,
+                subtitle: l10n.lotSubmittedSubtitle,
                 isCompleted: true,
                 isCurrent: false,
                 isLast: false,
               ),
 
               _buildTimelineItem(
-                title: 'Quality Inspection',
-                subtitle: 'Quality inspection is currently in progress.',
+                title: l10n.qualityInspection,
+                subtitle: l10n.qualityInspectionSubtitle,
                 isCompleted: true,
                 isCurrent: false,
                 isLast: false,
@@ -165,7 +167,7 @@ class LotDetailsScreen extends StatelessWidget {
                     ),
                   );
                 },
-                actionLabel: 'View Results',
+                actionLabel: l10n.viewResults,
                 actionOnTap: () {
                   Navigator.push(
                     context,
@@ -177,8 +179,8 @@ class LotDetailsScreen extends StatelessWidget {
               ),
 
               _buildTimelineItem(
-                title: 'Quality Certificate',
-                subtitle: 'Certificate will be issued after inspection.',
+                title: l10n.qualityCertificate,
+                subtitle: l10n.qualityCertificateSubtitle,
                 isCompleted: true,
                 isCurrent: false,
                 isLast: false,
@@ -190,7 +192,7 @@ class LotDetailsScreen extends StatelessWidget {
                     ),
                   );
                 },
-                actionLabel: 'View Certificate',
+                actionLabel: l10n.viewCertificate,
                 actionOnTap: () {
                   Navigator.push(
                     context,
@@ -202,8 +204,8 @@ class LotDetailsScreen extends StatelessWidget {
               ),
 
               _buildTimelineItem(
-                title: 'Procurement Agreement',
-                subtitle: 'Agreement will be created after approval.',
+                title: l10n.procurementAgreement,
+                subtitle: l10n.procurementAgreementSubtitle,
                 isCompleted: true,
                 isCurrent: false,
                 isLast: false,
@@ -215,7 +217,7 @@ class LotDetailsScreen extends StatelessWidget {
                     ),
                   );
                 },
-                actionLabel: 'View Agreement',
+                actionLabel: l10n.viewAgreement,
                 actionOnTap: () {
                   Navigator.push(
                     context,
@@ -227,8 +229,8 @@ class LotDetailsScreen extends StatelessWidget {
               ),
 
               _buildTimelineItem(
-                title: 'Pickup / Delivery',
-                subtitle: 'Pickup schedule will appear here.',
+                title: l10n.pickupDelivery,
+                subtitle: l10n.pickupDeliverySubtitle,
                 isCompleted: true,
                 isCurrent: false,
                 isLast: false,
@@ -240,7 +242,7 @@ class LotDetailsScreen extends StatelessWidget {
                     ),
                   );
                 },
-                actionLabel: 'Track Details',
+                actionLabel: l10n.trackDetails,
                 actionOnTap: () {
                   Navigator.push(
                     context,
@@ -252,8 +254,8 @@ class LotDetailsScreen extends StatelessWidget {
               ),
 
               _buildTimelineItem(
-                title: 'Warehouse Receipt',
-                subtitle: 'Warehouse receipt will be recorded here.',
+                title: l10n.warehouseReceipt,
+                subtitle: l10n.warehouseReceiptSubtitle,
                 isCompleted: true,
                 isCurrent: false,
                 isLast: false,
@@ -265,7 +267,7 @@ class LotDetailsScreen extends StatelessWidget {
                     ),
                   );
                 },
-                actionLabel: 'View Receipt',
+                actionLabel: l10n.viewReceipt,
                 actionOnTap: () {
                   Navigator.push(
                     context,
@@ -277,8 +279,8 @@ class LotDetailsScreen extends StatelessWidget {
               ),
 
               _buildTimelineItem(
-                title: 'Payment',
-                subtitle: 'Payment status will appear here.',
+                title: l10n.payment,
+                subtitle: l10n.paymentSubtitle,
                 isCompleted: true,
                 isCurrent: true,
                 isLast: true,
@@ -290,7 +292,7 @@ class LotDetailsScreen extends StatelessWidget {
                     ),
                   );
                 },
-                actionLabel: 'View Payment',
+                actionLabel: l10n.viewPayment,
                 actionOnTap: () {
                   Navigator.push(
                     context,
@@ -306,9 +308,9 @@ class LotDetailsScreen extends StatelessWidget {
               // ==================================================
               // HARVEST DETAILS
               // ==================================================
-              const Text(
-                'Harvest Details',
-                style: TextStyle(
+              Text(
+                l10n.harvestDetails,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF202420),
@@ -327,15 +329,15 @@ class LotDetailsScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    _buildDetailRow('Millet Type', milletName),
+                    _buildDetailRow(l10n.milletType, milletName),
                     _buildDivider(),
-                    _buildDetailRow('Estimated Quantity', quantity),
+                    _buildDetailRow(l10n.estimatedQuantity, quantity),
                     _buildDivider(),
-                    _buildDetailRow('Harvest Date', '20/08/2026'),
+                    _buildDetailRow(l10n.harvestDate, '20/08/2026'),
                     _buildDivider(),
-                    _buildDetailRow('Farm', 'Green Hill Farm'),
+                    _buildDetailRow(l10n.farmLabel, 'Green Hill Farm'),
                     _buildDivider(),
-                    _buildDetailRow('FPO', 'Green Valley Cooperative'),
+                    _buildDetailRow(l10n.fpo, 'Green Valley Cooperative'),
                   ],
                 ),
               ),
@@ -365,7 +367,7 @@ class LotDetailsScreen extends StatelessWidget {
 
                     Expanded(
                       child: Text(
-                        'Your FPO will update the lot status as it moves through the procurement process.',
+                        l10n.fpoUpdateNote,
                         style: const TextStyle(
                           fontSize: 11,
                           height: 1.4,
