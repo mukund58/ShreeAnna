@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/theme.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../model/farm.dart';
 
 class FarmScreen extends StatelessWidget {
@@ -183,6 +184,7 @@ class FarmScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: ShreeAnnaTheme.background,
 
@@ -198,9 +200,9 @@ class FarmScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Color(0xFF394139)),
         ),
 
-        title: const Text(
-          'ShreeAnna',
-          style: TextStyle(
+        title: Text(
+          l10n.appName,
+          style: const TextStyle(
             color: ShreeAnnaTheme.primaryGreen,
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -219,9 +221,9 @@ class FarmScreen extends StatelessWidget {
               // TITLE
               // ==================================================
 
-              const Text(
-                'My Farm',
-                style: TextStyle(
+              Text(
+                l10n.farmInformation,
+                style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF202420),

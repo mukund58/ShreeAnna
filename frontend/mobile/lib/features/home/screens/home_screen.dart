@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/theme.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 import '../../lots/screen/my_lots_screen.dart';
 import '../../lots/screen/sell_millet_screen.dart';
 import '../../lots/screen/lot_details_screen.dart';
 import '../../farm/screen/farm_management_screen.dart';
+import '../../support/screen/support_screen.dart';
 
 import '../../profile/screen/profile_screen.dart';
 import '../../farmers/services/farmer_api.dart';
@@ -81,6 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // ============================================================
 
   Widget _buildHomeContent() {
+    final l10n = AppLocalizations.of(context)!;
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(18, 20, 18, 24),
       child: Column(
@@ -93,39 +96,53 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Hello, Ramesh Kumar',
-                    style: TextStyle(
+                    l10n.helloFarmer('Ramesh Kumar'),
+                    style: const TextStyle(
                       fontSize: 19,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF202420),
                     ),
                   ),
 
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
 
                   Text(
-                    'Current FPO: Green Valley Cooperative',
-                    style: TextStyle(fontSize: 11, color: Color(0xFF596159)),
+                    l10n.currentFpo('Green Valley Cooperative'),
+                    style: const TextStyle(fontSize: 11, color: Color(0xFF596159)),
                   ),
                 ],
               ),
 
-              Container(
-                width: 38,
-                height: 38,
-                decoration: BoxDecoration(
-                  color: ShreeAnnaTheme.primaryGreen,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: const Icon(
-                  Icons.notifications_none,
-                  color: Colors.white,
-                  size: 22,
-                ),
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const SupportScreen()),
+                      );
+                    },
+                    icon: const Icon(Icons.help_outline, color: ShreeAnnaTheme.primaryGreen),
+                  ),
+                  const SizedBox(width: 4),
+                  Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      color: ShreeAnnaTheme.primaryGreen,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Icon(
+                      Icons.notifications_none,
+                      color: Colors.white,
+                      size: 22,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -146,9 +163,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
               icon: const Icon(Icons.agriculture, size: 19),
-              label: const Text(
-                'Sell Millet',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+              label: Text(
+                l10n.sellMillet,
+                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: ShreeAnnaTheme.primaryGreen,
@@ -164,33 +181,66 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 10),
 
           // ------------------------------------------------------
-          // MANAGE FARMS BUTTON
+          // MANAGE FARMS BUTTON & HELP SUPPORT
           // ------------------------------------------------------
-          SizedBox(
-            width: double.infinity,
-            height: 46,
-            child: OutlinedButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const FarmManagementScreen(),
+          Row(
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: 46,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const FarmManagementScreen(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.agriculture_outlined, size: 18),
+                    label: Text(
+                      l10n.manageFarms,
+                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: ShreeAnnaTheme.primaryGreen,
+                      side: const BorderSide(color: ShreeAnnaTheme.primaryGreen),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
                   ),
-                );
-              },
-              icon: const Icon(Icons.agriculture_outlined, size: 18),
-              label: const Text(
-                'Manage Farms',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-              ),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: ShreeAnnaTheme.primaryGreen,
-                side: const BorderSide(color: ShreeAnnaTheme.primaryGreen),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4),
                 ),
               ),
-            ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: SizedBox(
+                  height: 46,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SupportScreen(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.help_outline, size: 18),
+                    label: Text(
+                      l10n.helpSupport,
+                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: ShreeAnnaTheme.primaryGreen,
+                      side: const BorderSide(color: ShreeAnnaTheme.primaryGreen),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
 
           const SizedBox(height: 20),
@@ -205,9 +255,9 @@ class _HomeScreenState extends State<HomeScreen> {
           // ------------------------------------------------------
           // RECENT LOT STATUS
           // ------------------------------------------------------
-          const Text(
-            'Recent Lot Status',
-            style: TextStyle(
+          Text(
+            l10n.recentLotStatus,
+            style: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
               color: Color(0xFF202420),
@@ -289,6 +339,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // ============================================================
 
   Widget _buildActiveLotsCard() {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(15),
@@ -303,16 +354,16 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Active Lots',
-                  style: TextStyle(fontSize: 12, color: Color(0xFF596159)),
+                Text(
+                  l10n.activeLots,
+                  style: const TextStyle(fontSize: 12, color: Color(0xFF596159)),
                 ),
 
                 const SizedBox(height: 6),
 
-                const Text(
-                  '3 Lots',
-                  style: TextStyle(
+                Text(
+                  l10n.lotsCount(3),
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF202420),
@@ -334,9 +385,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(width: 6),
 
-                    const Text(
-                      '2 Pending Action',
-                      style: TextStyle(
+                    Text(
+                      l10n.pendingAction(2),
+                      style: const TextStyle(
                         fontSize: 11,
                         color: ShreeAnnaTheme.primaryGreen,
                         fontWeight: FontWeight.w600,
@@ -379,6 +430,7 @@ class _HomeScreenState extends State<HomeScreen> {
     required String submittedDate,
     required String action,
   }) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(13),
@@ -503,9 +555,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              child: const Text(
-                'View Details',
-                style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
+              child: Text(
+                l10n.viewDetails,
+                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -519,6 +571,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // ============================================================
 
   Widget _buildBottomNavigationBar() {
+    final l10n = AppLocalizations.of(context)!;
     return NavigationBar(
       selectedIndex: _selectedIndex,
       onDestinationSelected: _onNavigationItemSelected,
@@ -529,29 +582,29 @@ class _HomeScreenState extends State<HomeScreen> {
 
       height: 65,
 
-      destinations: const [
+      destinations: [
         NavigationDestination(
-          icon: Icon(Icons.home_outlined),
-          selectedIcon: Icon(Icons.home),
-          label: 'Home',
+          icon: const Icon(Icons.home_outlined),
+          selectedIcon: const Icon(Icons.home),
+          label: l10n.home,
         ),
 
         NavigationDestination(
-          icon: Icon(Icons.inventory_2_outlined),
-          selectedIcon: Icon(Icons.inventory_2),
-          label: 'My Lots',
+          icon: const Icon(Icons.inventory_2_outlined),
+          selectedIcon: const Icon(Icons.inventory_2),
+          label: l10n.myLots,
         ),
 
         NavigationDestination(
-          icon: Icon(Icons.agriculture_outlined),
-          selectedIcon: Icon(Icons.agriculture),
-          label: 'Farm',
+          icon: const Icon(Icons.agriculture_outlined),
+          selectedIcon: const Icon(Icons.agriculture),
+          label: l10n.farm,
         ),
 
         NavigationDestination(
-          icon: Icon(Icons.person_outline),
-          selectedIcon: Icon(Icons.person),
-          label: 'Profile',
+          icon: const Icon(Icons.person_outline),
+          selectedIcon: const Icon(Icons.person),
+          label: l10n.profile,
         ),
       ],
     );

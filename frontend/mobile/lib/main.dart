@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'app/theme.dart';
 import 'core/localization/app_language.dart';
 import 'core/network/api_client.dart';
 import 'core/storage/token_storage.dart';

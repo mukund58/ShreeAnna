@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart' show rootBundle, PlatformException;
 
 import '../../../app/theme.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class AddFarmScreen extends StatefulWidget {
   const AddFarmScreen({super.key});
@@ -243,14 +244,15 @@ class _AddFarmScreenState extends State<AddFarmScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: ShreeAnnaTheme.background,
       appBar: AppBar(
         backgroundColor: ShreeAnnaTheme.background,
         elevation: 0,
-        title: const Text(
-          'Add New Farm',
-          style: TextStyle(color: ShreeAnnaTheme.primaryGreen),
+        title: Text(
+          l10n.addFarmTitle,
+          style: const TextStyle(color: ShreeAnnaTheme.primaryGreen),
         ),
       ),
       body: SafeArea(
@@ -259,20 +261,20 @@ class _AddFarmScreenState extends State<AddFarmScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Create Farm',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              Text(
+                l10n.addFarmTitle,
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Farm Name'),
+                decoration: InputDecoration(labelText: l10n.farmName),
               ),
               const SizedBox(height: 8),
               TextField(
                 controller: _areaController,
-                decoration: const InputDecoration(
-                  labelText: 'Total Area (Acres)',
+                decoration: InputDecoration(
+                  labelText: l10n.area,
                 ),
                 keyboardType: TextInputType.number,
               ),
@@ -281,7 +283,7 @@ class _AddFarmScreenState extends State<AddFarmScreen> {
               // Soil Type
               DropdownButtonFormField<String>(
                 initialValue: _soilType,
-                decoration: const InputDecoration(labelText: 'Soil Type'),
+                decoration: InputDecoration(labelText: l10n.soilType),
                 items: const [
                   DropdownMenuItem(
                     value: 'Black Soil',
@@ -305,43 +307,43 @@ class _AddFarmScreenState extends State<AddFarmScreen> {
               // Millet Type
               DropdownButtonFormField<String>(
                 initialValue: _selectedMilletType,
-                decoration: const InputDecoration(labelText: 'Millet Type'),
+                decoration: InputDecoration(labelText: l10n.milletType),
                 items: [
                   DropdownMenuItem(
                     value: 'Sorghum',
-                    child: Text('Sorghum (Jowar)'),
+                    child: Text(l10n.milletSorghum),
                   ),
                   DropdownMenuItem(
                     value: 'Pearl Millet',
-                    child: Text('Pearl Millet (Bajra)'),
+                    child: Text(l10n.milletPearl),
                   ),
                   DropdownMenuItem(
                     value: 'Finger Millet',
-                    child: Text('Finger Millet (Ragi)'),
+                    child: Text(l10n.milletFinger),
                   ),
                   DropdownMenuItem(
                     value: 'Foxtail Millet',
-                    child: Text('Foxtail Millet (Kangni)'),
+                    child: Text(l10n.milletFoxtail),
                   ),
                   DropdownMenuItem(
                     value: 'Little Millet',
-                    child: Text('Little Millet (Kutki)'),
+                    child: Text(l10n.milletLittle),
                   ),
                   DropdownMenuItem(
                     value: 'Kodo Millet',
-                    child: Text('Kodo Millet (Varagu)'),
+                    child: Text(l10n.milletKodo),
                   ),
                   DropdownMenuItem(
                     value: 'Barnyard Millet',
-                    child: Text('Barnyard Millet (Sanwa)'),
+                    child: Text(l10n.milletBarnyard),
                   ),
                   DropdownMenuItem(
                     value: 'Proso Millet',
-                    child: Text('Proso Millet (Chena)'),
+                    child: Text(l10n.milletProso),
                   ),
                   DropdownMenuItem(
                     value: 'Browntop Millet',
-                    child: Text('Browntop Millet (Korralu)'),
+                    child: Text(l10n.milletBrowntop),
                   ),
                 ],
                 onChanged: (value) {
@@ -354,7 +356,7 @@ class _AddFarmScreenState extends State<AddFarmScreen> {
 
               DropdownButtonFormField<String>(
                 initialValue: _selectedDistrict,
-                decoration: const InputDecoration(labelText: 'District'),
+                decoration: InputDecoration(labelText: l10n.district),
                 items: _districts
                     .map((d) => DropdownMenuItem(value: d, child: Text(d)))
                     .toList(),
@@ -378,7 +380,7 @@ class _AddFarmScreenState extends State<AddFarmScreen> {
 
               DropdownButtonFormField<String>(
                 value: _selectedTaluka,
-                decoration: const InputDecoration(labelText: 'Taluka'),
+                decoration: InputDecoration(labelText: l10n.taluka),
                 items: _talukas
                     .map((t) => DropdownMenuItem(value: t, child: Text(t)))
                     .toList(),
@@ -392,8 +394,9 @@ class _AddFarmScreenState extends State<AddFarmScreen> {
                     _surveyNumbers = [];
                   });
 
-                  if (_selectedDistrict != null)
+                  if (_selectedDistrict != null) {
                     await _populateVillagesForTaluka(_selectedDistrict!, v);
+                  }
                 },
               ),
 
@@ -401,7 +404,7 @@ class _AddFarmScreenState extends State<AddFarmScreen> {
 
               DropdownButtonFormField<String>(
                 value: _selectedVillage,
-                decoration: const InputDecoration(labelText: 'Village'),
+                decoration: InputDecoration(labelText: l10n.village),
                 items: _villages
                     .map((v) => DropdownMenuItem(value: v, child: Text(v)))
                     .toList(),
@@ -413,12 +416,13 @@ class _AddFarmScreenState extends State<AddFarmScreen> {
                     _surveyNumbers = [];
                   });
 
-                  if (_selectedDistrict != null && _selectedTaluka != null)
+                  if (_selectedDistrict != null && _selectedTaluka != null) {
                     await _populateSurveysForVillage(
                       _selectedDistrict!,
                       _selectedTaluka!,
                       v,
                     );
+                  }
                 },
               ),
 
@@ -522,14 +526,14 @@ class _AddFarmScreenState extends State<AddFarmScreen> {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel'),
+                      child: Text(l10n.cancel),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: _save,
-                      child: const Text('Save'),
+                      child: Text(l10n.save),
                     ),
                   ),
                 ],

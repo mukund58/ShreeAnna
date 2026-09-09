@@ -7,6 +7,7 @@ import '../../farmers/services/farmer_api.dart';
 import '../../../core/localization/app_language.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../auth/screen/welcome_screen.dart';
+import '../../support/screen/support_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -608,9 +609,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 _buildActionTile(
                   icon: Icons.help_outline,
-                  title: 'Help & Support',
+                  title: l10n.helpSupport,
                   onTap: () {
-                    debugPrint('Help pressed');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const SupportScreen(),
+                      ),
+                    );
                   },
                 ),
 
