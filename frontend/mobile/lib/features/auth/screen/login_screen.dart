@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../app/theme.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import 'otp_screen.dart';
 import '../services/farmer_auth_api.dart';
 
@@ -24,6 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _sendOtp() async {
+    final l10n = AppLocalizations.of(context)!;
     String mobileNumber = _mobileController.text.trim();
     // 1. Remove all spaces and the plus symbol first
     String formattedPhone = mobileNumber.replaceAll(RegExp(r'[\s+]'), '');
@@ -42,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Please enter a valid 10-digit mobile number : $mobileNumber',
+            l10n.invalidMobileNumber,
           ),
         ),
       );
@@ -81,6 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: ShreeAnnaTheme.background,
 
@@ -99,9 +102,9 @@ class _LoginScreenState extends State<LoginScreen> {
           },
         ),
 
-        title: const Text(
-          'ShreeAnna',
-          style: TextStyle(
+        title: Text(
+          l10n.appName,
+          style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
             color: ShreeAnnaTheme.primaryGreen,
@@ -147,10 +150,10 @@ class _LoginScreenState extends State<LoginScreen> {
               // --------------------------------------------------
               // TITLE
               // --------------------------------------------------
-              const Text(
-                'Welcome Back',
+              Text(
+                l10n.welcomeBack,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 27,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF202420),
@@ -159,10 +162,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 8),
 
-              const Text(
-                'Enter your mobile number to continue.',
+              Text(
+                l10n.enterMobileSubtitle,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, color: Color(0xFF596159)),
+                style: const TextStyle(fontSize: 14, color: Color(0xFF596159)),
               ),
 
               const SizedBox(height: 34),
@@ -181,9 +184,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Mobile Number',
-                      style: TextStyle(
+                    Text(
+                      l10n.mobileNumber,
+                      style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: Color(0xFF303530),
@@ -203,7 +206,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       decoration: InputDecoration(
                         counterText: '',
 
-                        hintText: 'Enter your 10 digit number',
+                        hintText: l10n.enterMobileNumberHint,
 
                         hintStyle: const TextStyle(
                           color: Color(0xFF9A9F9A),
@@ -285,9 +288,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   color: Colors.white,
                                 ),
                               )
-                            : const Text(
-                                'Send OTP',
-                                style: TextStyle(
+                            : Text(
+                                l10n.sendOtp,
+                                style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -303,9 +306,9 @@ class _LoginScreenState extends State<LoginScreen> {
               // --------------------------------------------------
               // REGISTRATION MESSAGE
               // --------------------------------------------------
-              const Text(
-                "Don't have an account?",
-                style: TextStyle(fontSize: 14, color: Color(0xFF666D66)),
+              Text(
+                l10n.dontHaveAccount,
+                style: const TextStyle(fontSize: 14, color: Color(0xFF666D66)),
               ),
 
               const SizedBox(height: 7),
@@ -319,9 +322,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                child: const Text(
-                  'Ask your FPO to register you.',
-                  style: TextStyle(
+                child: Text(
+                  l10n.askFpoToRegister,
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: ShreeAnnaTheme.primaryGreen,

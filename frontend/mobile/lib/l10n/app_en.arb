@@ -41,5 +41,201 @@
   "hindi": "Hindi",
 
   "selectLanguage": "Select Language",
-  "languageChanged": "Language changed successfully."
+  "languageChanged": "Language changed successfully.",
+
+  "home": "Home",
+  "myLots": "My Lots",
+  "farm": "Farm",
+  "profile": "Profile",
+
+  "helloFarmer": "Hello, {name}",
+  "@helloFarmer": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "currentFpo": "Current FPO: {fpo}",
+  "@currentFpo": {
+    "placeholders": {
+      "fpo": { "type": "String" }
+    }
+  },
+  "activeLots": "Active Lots",
+  "lotsCount": "{count} Lots",
+  "@lotsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "pendingAction": "{count} Pending Action",
+  "@pendingAction": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "recentLotStatus": "Recent Lot Status",
+  "sellMillet": "Sell Millet",
+  "manageFarms": "Manage Farms",
+  "viewDetails": "View Details",
+  "submitted": "Submitted",
+  "submittedDate": "Submitted: {date}",
+  "@submittedDate": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+
+  "manageAndTrackLots": "Manage and track your submitted harvest lots.",
+  "submitNewLot": "Submit New Lot",
+  "estimatedQuantity": "Estimated Quantity",
+  "submissionDate": "Submission Date",
+
+  "statusSubmitted": "Submitted",
+  "statusInspectionInProgress": "Inspection in Progress",
+  "statusCertified": "Certified",
+  "statusAgreementAwaiting": "Agreement Awaiting Approval",
+  "statusPickupScheduled": "Pickup Scheduled",
+  "statusPaymentCompleted": "Payment Completed",
+  "statusInspectionCompleted": "Inspection Completed",
+  "statusPaymentProcessing": "Payment Processing",
+
+  "lotPrefix": "LOT #",
+  "lotDetails": "Lot Details",
+  "procurementJourney": "Procurement Journey",
+  "harvestDetails": "Harvest Details",
+  "milletType": "Millet Type",
+  "harvestDate": "Harvest Date",
+  "farmLabel": "Farm",
+  "fpo": "FPO",
+  "quantity": "Quantity",
+  "quantityKg": "Estimated Quantity (kg)",
+  "fpoUpdateNote": "Your FPO will update the lot status as it moves through the procurement process.",
+
+  "lotSubmitted": "Lot Submitted",
+  "lotSubmittedSubtitle": "Your lot has been submitted to the FPO.",
+  "qualityInspection": "Quality Inspection",
+  "qualityInspectionSubtitle": "Quality inspection is currently in progress.",
+  "qualityCertificate": "Quality Certificate",
+  "qualityCertificateSubtitle": "Certificate will be issued after inspection.",
+  "procurementAgreement": "Procurement Agreement",
+  "procurementAgreementSubtitle": "Agreement will be created after approval.",
+  "pickupDelivery": "Pickup / Delivery",
+  "pickupDeliverySubtitle": "Pickup schedule will appear here.",
+  "warehouseReceipt": "Warehouse Receipt",
+  "warehouseReceiptSubtitle": "Warehouse receipt will be recorded here.",
+  "payment": "Payment",
+  "paymentSubtitle": "Payment status will appear here.",
+
+  "viewResults": "View Results",
+  "viewCertificate": "View Certificate",
+  "viewAgreement": "View Agreement",
+  "trackDetails": "Track Details",
+  "viewReceipt": "View Receipt",
+  "viewPayment": "View Payment",
+
+  "sellMilletTitle": "Sell Millet",
+  "sellMilletSubtitle": "This information will be submitted to your FPO for quality inspection.",
+  "selectFarm": "Select Farm",
+  "chooseFarm": "Choose a farm...",
+  "chooseMilletType": "Choose millet type...",
+  "descriptionOptional": "Description (Optional)",
+  "descriptionHint": "Add any specific details about this lot...",
+  "submitLot": "SUBMIT LOT",
+  "confirmSubmission": "Confirm Submission",
+  "confirmSubmitMessage": "Are you sure you want to submit this lot for quality inspection?",
+  "submit": "Submit",
+  "pleaseSelectFarm": "Please select a farm",
+  "pleaseSelectMilletType": "Please select millet type",
+  "pleaseEnterQuantity": "Please enter estimated quantity",
+  "enterValidQuantity": "Enter a valid quantity",
+  "pleaseSelectHarvestDate": "Please select the harvest date",
+  "lotSubmittedSuccessfully": "Lot submitted successfully",
+
+  "milletPearl": "Pearl Millet (Bajra)",
+  "milletFinger": "Finger Millet (Ragi)",
+  "milletFoxtail": "Foxtail Millet",
+  "milletSorghum": "Sorghum (Jowar)",
+  "milletBarnyard": "Barnyard Millet (Sanwa)",
+  "milletBrowntop": "Browntop Millet (Korralu)",
+  "milletKodo": "Kodo Millet (Varagu)",
+  "milletLittle": "Little Millet (Kutki)",
+  "milletProso": "Proso Millet (Chena)",
+
+  "farmManagement": "Farm Management",
+  "noFarmsFound": "No farms found",
+  "addFirstFarm": "Add your first farm to get started.",
+  "addFarm": "ADD FARM",
+  "addFarmTitle": "Add Farm",
+  "viewFarm": "VIEW FARM",
+  "manage": "MANAGE",
+  "area": "AREA",
+  "soilType": "SOIL TYPE",
+  "areaAcres": "{area} Acres",
+  "@areaAcres": {
+    "placeholders": {
+      "area": { "type": "String" }
+    }
+  },
+  "failedToLoadFarms": "Failed to load farms",
+  "retry": "RETRY",
+  "farmSettings": "Farm Settings",
+  "viewLotsFor": "View Lots for {farmName}",
+  "@viewLotsFor": {
+    "placeholders": {
+      "farmName": { "type": "String" }
+    }
+  },
+  "viewAllLots": "View all lots and their details",
+  "requestInspection": "Request Inspection",
+  "scheduleAgronomist": "Schedule an agronomist visit",
+  "deleteFarm": "Delete Farm",
+  "removeFromDashboard": "Remove from dashboard permanently",
+  "archiveFarm": "Archive Farm",
+  "archiveFarmSubtitle": "Remove from active dashboard",
+  "archiveFarmTitle": "Archive Farm?",
+  "archiveFarmConfirm": "Are you sure you want to archive {farmName}?",
+  "@archiveFarmConfirm": {
+    "placeholders": {
+      "farmName": { "type": "String" }
+    }
+  },
+  "archive": "Archive",
+  "save": "Save",
+  "farmName": "Farm Name",
+
+  "welcomeTitle": "ShreeAnna",
+  "welcomeSubtitle": "Welcome, Farmer Friend",
+  "login": "Login",
+  "newRegistration": "New Registration",
+
+  "welcomeBack": "Welcome Back",
+  "enterMobileNumberHint": "Enter your 10 digit number",
+  "enterMobileSubtitle": "Enter your mobile number to continue.",
+  "sendOtp": "Send OTP",
+  "askFpoToRegister": "Ask your FPO to register you.",
+  "dontHaveAccount": "Don't have an account?",
+  "invalidMobileNumber": "Please enter a valid 10-digit mobile number",
+
+  "enterOtp": "Enter OTP",
+  "otpSentTo": "A 6-digit OTP has been sent to {phone}",
+  "@otpSentTo": {
+    "placeholders": {
+      "phone": { "type": "String" }
+    }
+  },
+  "verifyOtp": "VERIFY OTP",
+  "resendOtp": "Resend OTP",
+  "didNotReceiveOtp": "Didn't receive the OTP?",
+  "pleaseEnterCompleteOtp": "Please enter the complete 6-digit OTP",
+  "otpSentAgain": "OTP sent again",
+  "loginSuccessful": "Login successful",
+
+  "unableToLoadProfile": "Unable to load profile",
+  "acceptAgreement": "ACCEPT AGREEMENT",
+  "rejectAgreement": "REJECT AGREEMENT",
+  "callHelpline": "Call Helpline",
+  "emailSupport": "Email Support",
+  "frequentlyAskedQuestions": "Frequently Asked Questions",
+  "workingHours": "Mon - Sat (9:00 AM - 6:00 PM)",
+  "supportDescription": "Need help with your farm, millet lots, or payments? Contact your FPO or reach out to us."
 }

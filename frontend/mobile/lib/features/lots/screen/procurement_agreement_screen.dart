@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/theme.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import 'reject_agreement_dialog.dart';
 
 class ProcurementAgreementScreen extends StatelessWidget {
@@ -8,6 +9,7 @@ class ProcurementAgreementScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: ShreeAnnaTheme.background,
       appBar: AppBar(
@@ -17,9 +19,9 @@ class ProcurementAgreementScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
           icon: const Icon(Icons.arrow_back, color: Color(0xFF394139)),
         ),
-        title: const Text(
-          'Procurement Agreement',
-          style: TextStyle(
+        title: Text(
+          l10n.procurementAgreement,
+          style: const TextStyle(
             color: ShreeAnnaTheme.primaryGreen,
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -43,26 +45,26 @@ class ProcurementAgreementScreen extends StatelessWidget {
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text(
+                  children: [
+                    const Text(
                       'Lot #LOT-2026-001',
                       style: TextStyle(fontSize: 11, color: Color(0xFF687068)),
                     ),
-                    SizedBox(height: 6),
+                    const SizedBox(height: 6),
                     Text(
-                      'Procurement Agreement',
-                      style: TextStyle(
+                      l10n.procurementAgreement,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 10),
-                    Text(
+                    const SizedBox(height: 10),
+                    const Text(
                       'Farmer: Ramesh Kumar',
                       style: TextStyle(fontSize: 13),
                     ),
-                    SizedBox(height: 4),
-                    Text(
+                    const SizedBox(height: 4),
+                    const Text(
                       'FPO: Green Hill Farm',
                       style: TextStyle(fontSize: 12, color: Color(0xFF707870)),
                     ),
@@ -83,15 +85,15 @@ class ProcurementAgreementScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Procurement Terms',
-                      style: TextStyle(
+                    Text(
+                      l10n.procurementAgreement,
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 12),
-                    _termRow('Millet Type', 'Pearl Millet (Bajra)'),
+                    _termRow(l10n.milletType, l10n.milletPearl),
                     const Divider(),
                     _termRow('Quality Grade', 'Grade A'),
                     const Divider(),
@@ -137,9 +139,9 @@ class ProcurementAgreementScreen extends StatelessWidget {
                         foregroundColor: Colors.red,
                         side: const BorderSide(color: Colors.red),
                       ),
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 14),
-                        child: Text('REJECT AGREEMENT'),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        child: Text(l10n.rejectAgreement),
                       ),
                     ),
                   ),
@@ -158,9 +160,9 @@ class ProcurementAgreementScreen extends StatelessWidget {
                         backgroundColor: ShreeAnnaTheme.primaryGreen,
                         foregroundColor: Colors.white,
                       ),
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 14),
-                        child: Text('ACCEPT AGREEMENT'),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        child: Text(l10n.acceptAgreement),
                       ),
                     ),
                   ),

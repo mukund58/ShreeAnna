@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../app/theme.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class RejectAgreementDialog extends StatefulWidget {
   const RejectAgreementDialog({super.key});
@@ -21,6 +21,7 @@ class _RejectAgreementDialogState extends State<RejectAgreementDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -33,9 +34,9 @@ class _RejectAgreementDialogState extends State<RejectAgreementDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Reject Agreement',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  l10n.rejectAgreement,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
                   onPressed: () => Navigator.pop(context),
@@ -78,9 +79,9 @@ class _RejectAgreementDialogState extends State<RejectAgreementDialog> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Text('CANCEL'),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Text(l10n.cancel.toUpperCase()),
                     ),
                   ),
                 ),
@@ -93,9 +94,9 @@ class _RejectAgreementDialogState extends State<RejectAgreementDialog> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                     ),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Text('SUBMIT REJECTION'),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Text(l10n.rejectAgreement.toUpperCase()),
                     ),
                   ),
                 ),

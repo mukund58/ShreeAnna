@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 import '../../home/screens/home_screen.dart';
 import '../../../app/theme.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../services/farmer_auth_api.dart';
 import '../../../core/storage/token_storage.dart';
 
@@ -27,7 +28,6 @@ class _OtpScreenState extends State<OtpScreen> {
   final FarmerAuthApi _farmerAuthApi = FarmerAuthApi();
 
   bool _isVerifying = false;
-  bool _isResending = false;
 
   Timer? _timer;
 
@@ -139,9 +139,10 @@ class _OtpScreenState extends State<OtpScreen> {
   }
 
   Future<void> _verifyOtp() async {
+    final l10n = AppLocalizations.of(context)!;
     if (_otp.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter the complete 6-digit OTP')),
+        SnackBar(content: Text(l10n.pleaseEnterCompleteOtp)),
       );
 
       return;
@@ -186,7 +187,7 @@ class _OtpScreenState extends State<OtpScreen> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Login successful')));
+          .showSnackBar(SnackBar(content: Text(l10n.loginSuccessful)));
 
       Navigator.pushReplacement(
         context,
@@ -212,7 +213,7 @@ class _OtpScreenState extends State<OtpScreen> {
       return;
     }
 
-    // Actual OTP API call will be added later.
+    final l10n = AppLocalizations.of(context)!;
     for (final controller in _controllers) {
       controller.clear();
     }
@@ -221,11 +222,12 @@ class _OtpScreenState extends State<OtpScreen> {
     _startTimer();
 
     ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('OTP sent again')));
+        .showSnackBar(SnackBar(content: Text(l10n.otpSentAgain)));
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: ShreeAnnaTheme.background,
 
@@ -244,9 +246,9 @@ class _OtpScreenState extends State<OtpScreen> {
           },
         ),
 
-        title: const Text(
-          'ShreeAnna',
-          style: TextStyle(
+        title: Text(
+          l10n.appName,
+          style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
             color: ShreeAnnaTheme.primaryGreen,
@@ -286,10 +288,10 @@ class _OtpScreenState extends State<OtpScreen> {
               // --------------------------------------------------
               // TITLE
               // --------------------------------------------------
-              const Text(
-                'Enter Verification Code',
+              Text(
+                l10n.enterOtp,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF202420),
@@ -299,8 +301,7 @@ class _OtpScreenState extends State<OtpScreen> {
               const SizedBox(height: 8),
 
               Text(
-                'We\'ve sent a 6-digit code to your\n'
-                'registered mobile number.',
+                l10n.otpSentTo(widget.mobileNumber),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 14,
@@ -346,9 +347,9 @@ class _OtpScreenState extends State<OtpScreen> {
                             color: Colors.white,
                           ),
                         )
-                      : const Text(
-                          'Verify & Start  →',
-                          style: TextStyle(
+                      : Text(
+                          l10n.verifyOtp,
+                          style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
@@ -373,9 +374,9 @@ class _OtpScreenState extends State<OtpScreen> {
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  child: const Text(
-                    'Resend Code  ↻',
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                  child: Text(
+                    l10n.resendOtp,
+                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -386,7 +387,7 @@ class _OtpScreenState extends State<OtpScreen> {
               // COUNTDOWN
               // --------------------------------------------------
               Text(
-                'Didn\'t receive it? Wait 00:${_secondsRemaining.toString().padLeft(2, '0')}',
+                '${l10n.didNotReceiveOtp} 00:${_secondsRemaining.toString().padLeft(2, '0')}',
                 style: const TextStyle(fontSize: 11, color: Color(0xFF666D66)),
               ),
 

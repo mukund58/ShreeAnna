@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/theme.dart';
+import '../../../core/storage/token_storage.dart';
 import '../../farmers/models/farmer.dart';
 import '../../farmers/services/farmer_api.dart';
 import '../../../core/localization/app_language.dart';
 import '../../../l10n/generated/app_localizations.dart';
-import '../../../main.dart';
+import '../../auth/screen/welcome_screen.dart';
+import '../../support/screen/support_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -607,9 +609,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 _buildActionTile(
                   icon: Icons.help_outline,
-                  title: 'Help & Support',
+                  title: l10n.helpSupport,
                   onTap: () {
-                    debugPrint('Help pressed');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const SupportScreen(),
+                      ),
+                    );
                   },
                 ),
 
@@ -847,16 +854,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onPressed: () async {
                 Navigator.pop(dialogContext);
 
-                debugPrint('Logout confirmed');
+                final tokenStorage = TokenStorage();
+                await tokenStorage.clearAccessToken();
 
-                // TODO:
-                // Clear JWT from TokenStorage.
-                //
-                // Example:
-                // final tokenStorage = TokenStorage();
-                // await tokenStorage.clearAccessToken();
-                //
-                // Then navigate to LoginScreen.
+                if (!context.mounted) return;
+
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (_) => const WelcomeScreen(),
+                  ),
+                  (route) => false,
+                );
               },
 
               style: ElevatedButton.styleFrom(

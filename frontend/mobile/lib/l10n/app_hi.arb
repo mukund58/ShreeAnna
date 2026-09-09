@@ -41,5 +41,201 @@
   "hindi": "हिंदी",
 
   "selectLanguage": "भाषा चुनें",
-  "languageChanged": "भाषा सफलतापूर्वक बदल दी गई है।"
+  "languageChanged": "भाषा सफलतापूर्वक बदल दी गई है।",
+
+  "home": "होम",
+  "myLots": "मेरे लॉट",
+  "farm": "खेत",
+  "profile": "प्रोफ़ाइल",
+
+  "helloFarmer": "नमस्ते, {name}",
+  "@helloFarmer": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "currentFpo": "वर्तमान FPO: {fpo}",
+  "@currentFpo": {
+    "placeholders": {
+      "fpo": { "type": "String" }
+    }
+  },
+  "activeLots": "सक्रिय लॉट",
+  "lotsCount": "{count} लॉट",
+  "@lotsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "pendingAction": "{count} लंबित कार्य",
+  "@pendingAction": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "recentLotStatus": "हालिया लॉट स्थिति",
+  "sellMillet": "मिलेट बेचें",
+  "manageFarms": "खेत प्रबंधित करें",
+  "viewDetails": "विवरण देखें",
+  "submitted": "सबमिट किया",
+  "submittedDate": "सबमिट: {date}",
+  "@submittedDate": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+
+  "manageAndTrackLots": "अपने सबमिट किए गए फसल लॉट प्रबंधित और ट्रैक करें।",
+  "submitNewLot": "नया लॉट सबमिट करें",
+  "estimatedQuantity": "अनुमानित मात्रा",
+  "submissionDate": "सबमिशन तारीख",
+
+  "statusSubmitted": "सबमिट किया",
+  "statusInspectionInProgress": "निरीक्षण जारी है",
+  "statusCertified": "प्रमाणित",
+  "statusAgreementAwaiting": "समझौता अनुमोदन की प्रतीक्षा",
+  "statusPickupScheduled": "पिकअप निर्धारित",
+  "statusPaymentCompleted": "भुगतान पूर्ण",
+  "statusInspectionCompleted": "निरीक्षण पूर्ण",
+  "statusPaymentProcessing": "भुगतान प्रक्रिया",
+
+  "lotPrefix": "लॉट #",
+  "lotDetails": "लॉट विवरण",
+  "procurementJourney": "खरीद यात्रा",
+  "harvestDetails": "फसल विवरण",
+  "milletType": "मिलेट प्रकार",
+  "harvestDate": "फसल तारीख",
+  "farmLabel": "खेत",
+  "fpo": "FPO",
+  "quantity": "मात्रा",
+  "quantityKg": "अनुमानित मात्रा (किग्रा)",
+  "fpoUpdateNote": "आपका FPO खरीद प्रक्रिया के दौरान लॉट की स्थिति अपडेट करेगा।",
+
+  "lotSubmitted": "लॉट सबमिट",
+  "lotSubmittedSubtitle": "आपका लॉट FPO को सबमिट हो गया है।",
+  "qualityInspection": "गुणवत्ता निरीक्षण",
+  "qualityInspectionSubtitle": "गुणवत्ता निरीक्षण वर्तमान में जारी है।",
+  "qualityCertificate": "गुणवत्ता प्रमाणपत्र",
+  "qualityCertificateSubtitle": "निरीक्षण के बाद प्रमाणपत्र जारी होगा।",
+  "procurementAgreement": "खरीद समझौता",
+  "procurementAgreementSubtitle": "मंजूरी के बाद समझौता बनाया जाएगा।",
+  "pickupDelivery": "पिकअप / डिलीवरी",
+  "pickupDeliverySubtitle": "पिकअप शेड्यूल यहाँ दिखेगा।",
+  "warehouseReceipt": "गोदाम रसीद",
+  "warehouseReceiptSubtitle": "गोदाम रसीद यहाँ दर्ज होगी।",
+  "payment": "भुगतान",
+  "paymentSubtitle": "भुगतान स्थिति यहाँ दिखेगी।",
+
+  "viewResults": "परिणाम देखें",
+  "viewCertificate": "प्रमाणपत्र देखें",
+  "viewAgreement": "समझौता देखें",
+  "trackDetails": "ट्रैक विवरण",
+  "viewReceipt": "रसीद देखें",
+  "viewPayment": "भुगतान देखें",
+
+  "sellMilletTitle": "मिलेट बेचें",
+  "sellMilletSubtitle": "यह जानकारी गुणवत्ता निरीक्षण के लिए आपके FPO को सबमिट की जाएगी।",
+  "selectFarm": "खेत चुनें",
+  "chooseFarm": "खेत चुनें...",
+  "chooseMilletType": "मिलेट प्रकार चुनें...",
+  "descriptionOptional": "विवरण (वैकल्पिक)",
+  "descriptionHint": "इस लॉट के बारे में विशेष जानकारी जोड़ें...",
+  "submitLot": "लॉट सबमिट करें",
+  "confirmSubmission": "सबमिशन की पुष्टि",
+  "confirmSubmitMessage": "क्या आप वाकई इस लॉट को गुणवत्ता निरीक्षण के लिए सबमिट करना चाहते हैं?",
+  "submit": "सबमिट",
+  "pleaseSelectFarm": "कृपया एक खेत चुनें",
+  "pleaseSelectMilletType": "कृपया मिलेट प्रकार चुनें",
+  "pleaseEnterQuantity": "कृपया अनुमानित मात्रा दर्ज करें",
+  "enterValidQuantity": "एक मान्य मात्रा दर्ज करें",
+  "pleaseSelectHarvestDate": "कृपया फसल तारीख चुनें",
+  "lotSubmittedSuccessfully": "लॉट सफलतापूर्वक सबमिट हो गया",
+
+  "milletPearl": "बाजरा (Bajra)",
+  "milletFinger": "रागी (Finger Millet)",
+  "milletFoxtail": "कंगनी (Foxtail Millet)",
+  "milletSorghum": "ज्वार (Jowar)",
+  "milletBarnyard": "सावाँ (Sanwa)",
+  "milletBrowntop": "Browntop मिलेट (Korralu)",
+  "milletKodo": "कोदो (Varagu)",
+  "milletLittle": "कुटकी (Little Millet)",
+  "milletProso": "चीना (Proso Millet)",
+
+  "farmManagement": "खेत प्रबंधन",
+  "noFarmsFound": "कोई खेत नहीं मिला",
+  "addFirstFarm": "शुरू करने के लिए अपना पहला खेत जोड़ें।",
+  "addFarm": "खेत जोड़ें",
+  "addFarmTitle": "खेत जोड़ें",
+  "viewFarm": "खेत देखें",
+  "manage": "प्रबंधित करें",
+  "area": "क्षेत्रफल",
+  "soilType": "मिट्टी प्रकार",
+  "areaAcres": "{area} एकड़",
+  "@areaAcres": {
+    "placeholders": {
+      "area": { "type": "String" }
+    }
+  },
+  "failedToLoadFarms": "खेत लोड करने में विफल",
+  "retry": "पुनः प्रयास",
+  "farmSettings": "खेत सेटिंग",
+  "viewLotsFor": "{farmName} के लॉट देखें",
+  "@viewLotsFor": {
+    "placeholders": {
+      "farmName": { "type": "String" }
+    }
+  },
+  "viewAllLots": "सभी लॉट और उनका विवरण देखें",
+  "requestInspection": "निरीक्षण अनुरोध",
+  "scheduleAgronomist": "कृषि विशेषज्ञ की यात्रा निर्धारित करें",
+  "deleteFarm": "खेत हटाएं",
+  "removeFromDashboard": "डैशबोर्ड से स्थायी रूप से हटाएं",
+  "archiveFarm": "खेत संग्रहीत करें",
+  "archiveFarmSubtitle": "सक्रिय डैशबोर्ड से हटाएं",
+  "archiveFarmTitle": "खेत संग्रहीत करें?",
+  "archiveFarmConfirm": "क्या आप वाकई {farmName} को संग्रहीत करना चाहते हैं?",
+  "@archiveFarmConfirm": {
+    "placeholders": {
+      "farmName": { "type": "String" }
+    }
+  },
+  "archive": "संग्रहित करें",
+  "save": "सहेजें",
+  "farmName": "खेत का नाम",
+
+  "welcomeTitle": "श्रीअन्न",
+  "welcomeSubtitle": "स्वागत है, किसान मित्र",
+  "login": "लॉगिन",
+  "newRegistration": "नया पंजीकरण",
+
+  "welcomeBack": "वापस स्वागत है",
+  "enterMobileNumberHint": "10 अंकों का नंबर दर्ज करें",
+  "enterMobileSubtitle": "जारी रखने के लिए अपना मोबाइल नंबर दर्ज करें।",
+  "sendOtp": "OTP भेजें",
+  "askFpoToRegister": "FPO से पंजीकरण कराएं।",
+  "dontHaveAccount": "खाता नहीं है?",
+  "invalidMobileNumber": "कृपया एक मान्य 10-अंकीय मोबाइल नंबर दर्ज करें",
+
+  "enterOtp": "OTP दर्ज करें",
+  "otpSentTo": "{phone} पर 6 अंकों का OTP भेजा गया है",
+  "@otpSentTo": {
+    "placeholders": {
+      "phone": { "type": "String" }
+    }
+  },
+  "verifyOtp": "OTP सत्यापित करें",
+  "resendOtp": "OTP फिर भेजें",
+  "didNotReceiveOtp": "OTP नहीं मिला?",
+  "pleaseEnterCompleteOtp": "कृपया पूरा 6 अंकों का OTP दर्ज करें",
+  "otpSentAgain": "OTP फिर से भेजा गया",
+  "loginSuccessful": "लॉगिन सफल",
+
+  "unableToLoadProfile": "प्रोफ़ाइल लोड करने में असमर्थ",
+  "acceptAgreement": "अनुबंध स्वीकार करें",
+  "rejectAgreement": "अनुबंध अस्वीकार करें",
+  "callHelpline": "हेल्पलाइन पर कॉल करें",
+  "emailSupport": "ईमेल सहायता",
+  "frequentlyAskedQuestions": "अक्सर पूछे जाने वाले प्रश्न",
+  "workingHours": "सोम - शनि (सुबह 9:00 - शाम 6:00)",
+  "supportDescription": "अपने खेत, बाजरा लॉट या भुगतान में मदद चाहिए? अपने FPO से संपर्क करें।"
 }

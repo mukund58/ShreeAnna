@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../app/theme.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import 'login_screen.dart';
 import 'registration_screen.dart';
 
@@ -10,6 +11,7 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -50,9 +52,9 @@ class WelcomeScreen extends StatelessWidget {
                 const SizedBox(height: 28),
 
                 // Application name
-                const Text(
-                  'ShreeAnna',
-                  style: TextStyle(
+                Text(
+                  l10n.appName,
+                  style: const TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF202420),
@@ -62,9 +64,9 @@ class WelcomeScreen extends StatelessWidget {
                 const SizedBox(height: 8),
 
                 // Subtitle
-                const Text(
-                  'Welcome, Farmer Friend',
-                  style: TextStyle(fontSize: 15, color: Color(0xFF465046)),
+                Text(
+                  l10n.welcomeSubtitle,
+                  style: const TextStyle(fontSize: 15, color: Color(0xFF465046)),
                 ),
 
                 const SizedBox(height: 28),
@@ -88,9 +90,9 @@ class WelcomeScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    child: Text(
+                      l10n.login,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -120,9 +122,9 @@ class WelcomeScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
-                    child: const Text(
-                      'New Registration',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    child: Text(
+                      l10n.newRegistration,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),

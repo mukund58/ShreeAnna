@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/theme.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../model/farm.dart';
 // import 'farm_overview_screen.dart';
 import 'manage_farm_screen.dart';
@@ -56,6 +57,7 @@ class _FarmManagementScreenState extends State<FarmManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ShreeAnnaTheme.background,
@@ -64,9 +66,9 @@ class _FarmManagementScreenState extends State<FarmManagementScreen> {
 
         automaticallyImplyLeading: false,
 
-        title: const Text(
-          'ShreeAnna',
-          style: TextStyle(
+        title: Text(
+          l10n.appName,
+          style: const TextStyle(
             color: ShreeAnnaTheme.primaryGreen,
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -148,6 +150,7 @@ class _FarmCard extends StatelessWidget {
   }
 
   void _showFarmSettings(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -177,9 +180,9 @@ class _FarmCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Farm Settings',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  Text(
+                    l10n.farmSettings,
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   IconButton(
                     onPressed: () {
@@ -192,8 +195,8 @@ class _FarmCard extends StatelessWidget {
 
               _buildFarmAction(
                 icon: Icons.analytics_outlined,
-                title: 'View Lots for ${farm.farmName}',
-                subtitle: 'View all lots and their details',
+                title: l10n.viewLotsFor(farm.farmName),
+                subtitle: l10n.viewAllLots,
                 onTap: () {
                   Navigator.pop(context);
 
@@ -203,8 +206,8 @@ class _FarmCard extends StatelessWidget {
 
               _buildFarmAction(
                 icon: Icons.assignment_outlined,
-                title: 'Request Inspection',
-                subtitle: 'Schedule an agronomist visit',
+                title: l10n.requestInspection,
+                subtitle: l10n.scheduleAgronomist,
                 onTap: () {
                   Navigator.pop(context);
 
@@ -216,8 +219,8 @@ class _FarmCard extends StatelessWidget {
 
               _buildFarmAction(
                 icon: Icons.archive_outlined,
-                title: 'Delete Farm',
-                subtitle: 'Remove from dashboard permanently',
+                title: l10n.deleteFarm,
+                subtitle: l10n.removeFromDashboard,
                 destructive: true,
                 onTap: () {
                   Navigator.pop(context);
@@ -228,8 +231,8 @@ class _FarmCard extends StatelessWidget {
 
               _buildFarmAction(
                 icon: Icons.archive_outlined,
-                title: 'Archive Farm',
-                subtitle: 'Remove from active dashboard',
+                title: l10n.archiveFarm,
+                subtitle: l10n.archiveFarmSubtitle,
                 destructive: true,
                 onTap: () {
                   Navigator.pop(context);
@@ -286,20 +289,21 @@ class _FarmCard extends StatelessWidget {
   }
 
   void _showArchiveConfirmation(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Archive Farm?'),
+          title: Text(l10n.archiveFarmTitle),
 
-          content: Text('Are you sure you want to archive ${farm.farmName}?'),
+          content: Text(l10n.archiveFarmConfirm(farm.farmName)),
 
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
 
             ElevatedButton(
@@ -312,7 +316,7 @@ class _FarmCard extends StatelessWidget {
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Archive'),
+              child: Text(l10n.archive),
             ),
           ],
         );
@@ -322,6 +326,7 @@ class _FarmCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       height: 250,
@@ -476,16 +481,15 @@ class _FarmCard extends StatelessWidget {
                           children: [
                             Expanded(
                               child: _InfoItem(
-                                label: 'AREA',
-                                value:
-                                    '${farm.areaInAcres.toStringAsFixed(1)} Acres',
+                                label: l10n.area,
+                                value: l10n.areaAcres(farm.areaInAcres.toStringAsFixed(1)),
                                 light: true,
                               ),
                             ),
 
                             Expanded(
                               child: _InfoItem(
-                                label: 'SOIL TYPE',
+                                label: l10n.soilType,
                                 value: farm.soilType,
                                 light: true,
                               ),
@@ -499,7 +503,7 @@ class _FarmCard extends StatelessWidget {
                           children: [
                             Expanded(
                               child: _InfoItem(
-                                label: 'DISTRICT',
+                                label: l10n.district.toUpperCase(),
                                 value: farm.district,
                                 light: true,
                               ),
@@ -507,7 +511,7 @@ class _FarmCard extends StatelessWidget {
 
                             Expanded(
                               child: _InfoItem(
-                                label: 'VILLAGE',
+                                label: l10n.village.toUpperCase(),
                                 value: farm.village,
                                 light: true,
                               ),
@@ -538,9 +542,9 @@ class _FarmCard extends StatelessWidget {
                           ),
                         ),
 
-                        child: const Text(
-                          'VIEW FARM',
-                          style: TextStyle(
+                        child: Text(
+                          l10n.viewFarm,
+                          style: const TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
                           ),
@@ -569,9 +573,9 @@ class _FarmCard extends StatelessWidget {
                           ),
                         ),
 
-                        child: const Text(
-                          'MANAGE',
-                          style: TextStyle(
+                        child: Text(
+                          l10n.manage,
+                          style: const TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
                           ),
@@ -664,6 +668,7 @@ class _EmptyFarmView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
       children: [
@@ -681,23 +686,23 @@ class _EmptyFarmView extends StatelessWidget {
 
                 const SizedBox(height: 16),
 
-                const Text(
-                  'No farms found',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  l10n.noFarmsFound,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
 
                 const SizedBox(height: 8),
 
-                const Text(
-                  'Add your first farm to get started.',
-                  style: TextStyle(color: Colors.grey),
+                Text(
+                  l10n.addFirstFarm,
+                  style: const TextStyle(color: Colors.grey),
                 ),
 
                 const SizedBox(height: 20),
 
                 ElevatedButton(
                   onPressed: onAddFarm,
-                  child: const Text('ADD FARM'),
+                  child: Text(l10n.addFarm),
                 ),
               ],
             ),
@@ -720,6 +725,7 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
       children: [
@@ -735,9 +741,9 @@ class _ErrorView extends StatelessWidget {
 
                   const SizedBox(height: 16),
 
-                  const Text(
-                    'Failed to load farms',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  Text(
+                    l10n.failedToLoadFarms,
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
 
                   const SizedBox(height: 8),
@@ -752,7 +758,7 @@ class _ErrorView extends StatelessWidget {
 
                   ElevatedButton(
                     onPressed: onRetry,
-                    child: const Text('RETRY'),
+                    child: Text(l10n.retry),
                   ),
                 ],
               ),
