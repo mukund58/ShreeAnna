@@ -9,6 +9,8 @@ import 'add_farm_screen.dart';
 import '../data/farm_api.dart';
 import '../../farmers/services/farmer_api.dart';
 import 'farm_screen.dart';
+import '../../../core/network/api_config.dart';
+import '../../../core/network/api_client.dart';
 
 class FarmManagementScreen extends StatefulWidget {
   const FarmManagementScreen({super.key});
@@ -20,6 +22,7 @@ class FarmManagementScreen extends StatefulWidget {
 class _FarmManagementScreenState extends State<FarmManagementScreen> {
   final FarmerApi _farmerApi = FarmerApi();
   final FarmApi _farmApi = FarmApi();
+  final ApiClient _apiClient = ApiClient();
 
   late Future<List<Farm>> _farmsFuture;
 
@@ -53,6 +56,16 @@ class _FarmManagementScreenState extends State<FarmManagementScreen> {
     });
 
     await _farmsFuture;
+  }
+
+  Future<void> deleteFarm(String farmId) async {
+    final response = await _apiClient.delete('$ApiConfig/$farmId');
+
+    if (response.statusCode != 204 && response.statusCode != 200) {
+      throw Exception(
+        'Failed to delete farm: ${response.statusCode} ${response.body}',
+      );
+    }
   }
 
   @override
@@ -142,10 +155,13 @@ class _FarmCard extends StatelessWidget {
 
   const _FarmCard({required this.farm, required this.onFarmChanged});
 
+
   void _openOverview(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => FarmScreen(farm: farm, milletType: farm.milletType)),
+      MaterialPageRoute(
+        builder: (_) => FarmScreen(farm: farm, milletType: farm.milletType),
+      ),
     );
   }
 
@@ -182,7 +198,10 @@ class _FarmCard extends StatelessWidget {
                 children: [
                   Text(
                     l10n.farmSettings,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   IconButton(
                     onPressed: () {
@@ -225,21 +244,21 @@ class _FarmCard extends StatelessWidget {
                 onTap: () {
                   Navigator.pop(context);
 
-                  _showArchiveConfirmation(context);
+                  _showDeleteConfirmation(context);
                 },
               ),
 
-              _buildFarmAction(
-                icon: Icons.archive_outlined,
-                title: l10n.archiveFarm,
-                subtitle: l10n.archiveFarmSubtitle,
-                destructive: true,
-                onTap: () {
-                  Navigator.pop(context);
+              // _buildFarmAction(
+              //   icon: Icons.archive_outlined,
+              //   title: l10n.archiveFarm,
+              //   subtitle: l10n.archiveFarmSubtitle,
+              //   destructive: true,
+              //   onTap: () {
+              //     Navigator.pop(context);
 
-                  _showArchiveConfirmation(context);
-                },
-              ),
+              //     _showArchiveConfirmation(context);
+              //   },
+              // ),
             ],
           ),
         );
@@ -255,7 +274,7 @@ class _FarmCard extends StatelessWidget {
     bool destructive = false,
   }) {
     final color = destructive ? Colors.red : ShreeAnnaTheme.primaryGreen;
-
+    final FarmApi _farmApi = FarmApi();
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 3),
 
@@ -317,6 +336,62 @@ class _FarmCard extends StatelessWidget {
                 foregroundColor: Colors.white,
               ),
               child: Text(l10n.archive),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showDeleteConfirmation(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(l10n.archiveFarmTitle),
+
+          content: Text(l10n.archiveFarmConfirm(farm.farmName)),
+
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(l10n.cancel),
+            ),
+
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                var _farmApi = FarmApi();
+                  
+
+                try {
+                  await _farmApi.deleteFarm(farm.id);
+
+                  await onFarmChanged();
+
+                  if (!context.mounted) return;
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('${farm.farmName} deleted successfully'),
+                    ),
+                  );
+                } catch (e) {
+                  if (!context.mounted) return;
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Failed to delete farm: $e')),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
+              child: Text(l10n.deleteFarm),
             ),
           ],
         );
@@ -482,7 +557,9 @@ class _FarmCard extends StatelessWidget {
                             Expanded(
                               child: _InfoItem(
                                 label: l10n.area,
-                                value: l10n.areaAcres(farm.areaInAcres.toStringAsFixed(1)),
+                                value: l10n.areaAcres(
+                                  farm.areaInAcres.toStringAsFixed(1),
+                                ),
                                 light: true,
                               ),
                             ),
@@ -558,8 +635,10 @@ class _FarmCard extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  ManageFarmScreen(farmName: farm.farmName),
+                              builder: (context) => ManageFarmScreen(
+                                farm: farm,
+                                farmName: farm.farmName,
+                              ),
                             ),
                           );
                         },
@@ -688,7 +767,10 @@ class _EmptyFarmView extends StatelessWidget {
 
                 Text(
                   l10n.noFarmsFound,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
 
                 const SizedBox(height: 8),
@@ -700,10 +782,7 @@ class _EmptyFarmView extends StatelessWidget {
 
                 const SizedBox(height: 20),
 
-                ElevatedButton(
-                  onPressed: onAddFarm,
-                  child: Text(l10n.addFarm),
-                ),
+                ElevatedButton(onPressed: onAddFarm, child: Text(l10n.addFarm)),
               ],
             ),
           ),
@@ -743,7 +822,10 @@ class _ErrorView extends StatelessWidget {
 
                   Text(
                     l10n.failedToLoadFarms,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
 
                   const SizedBox(height: 8),
@@ -756,10 +838,7 @@ class _ErrorView extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  ElevatedButton(
-                    onPressed: onRetry,
-                    child: Text(l10n.retry),
-                  ),
+                  ElevatedButton(onPressed: onRetry, child: Text(l10n.retry)),
                 ],
               ),
             ),

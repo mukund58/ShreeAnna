@@ -53,6 +53,12 @@ class ApiClient {
     return response;
   }
 
+  Future<http.Response> delete(String url) async {
+    final token = await _tokenStorage.getAccessToken();
+
+    return await http.delete(Uri.parse(url), headers: _headers(token));
+  }
+
   Map<String, String> _headers(String? token) {
     return {
       'Content-Type': 'application/json',

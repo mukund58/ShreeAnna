@@ -5,11 +5,13 @@ import 'package:flutter/services.dart' show rootBundle;
 
 import '../../../app/theme.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import '../model/farm.dart';
+import '../data/farm_api.dart';
 
 class ManageFarmScreen extends StatefulWidget {
-  final String farmName;
+  final Farm farm;
 
-  const ManageFarmScreen({super.key, required this.farmName});
+  const ManageFarmScreen({super.key, required this.farm, required String farmName});
 
   @override
   State<ManageFarmScreen> createState() => _ManageFarmScreenState();
@@ -24,17 +26,32 @@ class _ManageFarmScreenState extends State<ManageFarmScreen> {
   late TextEditingController _surveryNumberController;
   String _soilType = 'Black Soil';
   String? _selectedMilletType;
+  final FarmApi _farmApi = FarmApi();
+
+  bool _isSaving = false;
 
   @override
   void initState() {
     super.initState();
 
-    _farmNameController = TextEditingController(text: widget.farmName);
-    _areaController = TextEditingController(text: '12');
-    _districtController = TextEditingController(text: 'Dahod');
-    _talukaController = TextEditingController(text: 'Dahod');
-    _villageController = TextEditingController(text: 'Navagam');
-    _surveryNumberController = TextEditingController(text: '');
+    final farm = widget.farm;
+
+    _farmNameController = TextEditingController(text: farm.farmName);
+
+    _areaController = TextEditingController(text: farm.areaInAcres.toString());
+
+    _districtController = TextEditingController(text: farm.district);
+
+    _talukaController = TextEditingController(text: farm.taluka);
+
+    _villageController = TextEditingController(text: farm.village);
+
+    _surveryNumberController = TextEditingController(text: farm.surveyNumber);
+
+    _soilType = farm.soilType;
+
+    _selectedMilletType = farm.milletType;
+
     _loadLandData();
   }
 
@@ -66,9 +83,7 @@ class _ManageFarmScreenState extends State<ManageFarmScreen> {
               final surveys =
                   (villages.first['survey_numbers'] as List<dynamic>?);
               if (surveys != null && surveys.isNotEmpty) {
-                _surveryNumberController = TextEditingController(
-                  text: surveys.first as String,
-                );
+                _surveryNumberController.text = surveys.first as String;
               }
             });
           }
@@ -91,13 +106,75 @@ class _ManageFarmScreenState extends State<ManageFarmScreen> {
     super.dispose();
   }
 
-  void _saveChanges() {
-    final l10n = AppLocalizations.of(context)!;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.save)),
-    );
+  Future<void> _saveChanges() async {
+    if (_isSaving) {
+      return;
+    }
 
-    Navigator.pop(context);
+    final farmName = _farmNameController.text.trim();
+    final area = double.tryParse(_areaController.text.trim());
+
+    if (farmName.isEmpty) {
+      _showMessage('Please enter farm name.');
+      return;
+    }
+
+    if (area == null || area <= 0) {
+      _showMessage('Please enter a valid area.');
+      return;
+    }
+
+    if (_selectedMilletType == null || _selectedMilletType!.isEmpty) {
+      _showMessage('Please select millet type.');
+      return;
+    }
+
+    setState(() {
+      _isSaving = true;
+    });
+
+    try {
+      final updatedFarm = await _farmApi.updateFarm(
+        farmId: widget.farm.id,
+        farmName: farmName,
+        areaInAcres: area,
+        soilType: _soilType,
+        milletType: _selectedMilletType!,
+        district: _districtController.text.trim(),
+        taluka: _talukaController.text.trim(),
+        village: _villageController.text.trim(),
+        latitude: widget.farm.latitude,
+        longitude: widget.farm.longitude,
+        imageUrl: widget.farm.imageUrl,
+      );
+
+      if (!mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Farm updated successfully.')),
+      );
+
+      Navigator.pop(context, updatedFarm);
+    } catch (e) {
+      if (!mounted) {
+        return;
+      }
+
+      _showMessage(e.toString().replaceFirst('Exception: ', ''));
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
+    }
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -130,11 +207,14 @@ class _ManageFarmScreenState extends State<ManageFarmScreen> {
             children: [
               Text(
                 '${l10n.manage} ${l10n.farm}',
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 4),
               Text(
-                'Update details for ${widget.farmName}.',
+                'Update details for ${widget.farm.farmName}.',
                 style: const TextStyle(color: Color(0xFF687068)),
               ),
               const SizedBox(height: 20),
@@ -332,7 +412,7 @@ class _ManageFarmScreenState extends State<ManageFarmScreen> {
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: _saveChanges,
+                  onPressed: _isSaving ? null : _saveChanges,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ShreeAnnaTheme.primaryGreen,
                     foregroundColor: Colors.white,
@@ -340,10 +420,20 @@ class _ManageFarmScreenState extends State<ManageFarmScreen> {
                       borderRadius: BorderRadius.circular(6),
                     ),
                   ),
-                  child: Text(
-                    l10n.save,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
+
+                  child: _isSaving
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Text(
+                          l10n.save,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                 ),
               ),
             ],
