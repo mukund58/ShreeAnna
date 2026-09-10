@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 import '../../../app/theme.dart';
+import '../../farmers/services/farmer_api.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -17,6 +18,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   // FORM KEY
   // ------------------------------------------------------------
   final _formKey = GlobalKey<FormState>();
+  final FarmerApi _farmerApi = FarmerApi();
 
   // ------------------------------------------------------------
   // CONTROLLERS
@@ -39,6 +41,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   String? _selectedDistrict;
   String? _selectedTaluka;
   String? _selectedVillage;
+  DateTime? _selectedDob;
 
   @override
   void initState() {
@@ -148,7 +151,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   // ------------------------------------------------------------
   // REGISTER HANDLER
   // ------------------------------------------------------------
-  void _registerFarmer() {
+  Future<void> _registerFarmer() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -156,24 +159,39 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     final farmerName = _nameController.text.trim();
     final mobile = _mobileController.text.trim();
     final address = _addressController.text.trim();
-    final state = _selectedState ?? '';
+    final email = _emailController.text.trim();
     final district = _selectedDistrict ?? '';
     final taluka = _selectedTaluka ?? '';
     final village = _selectedVillage ?? '';
     final fpo = _selectedFpo ?? '';
 
-    debugPrint('Farmer Name: $farmerName');
-    debugPrint('Mobile: $mobile');
-    debugPrint('Address: $address');
-    debugPrint('State: $state');
-    debugPrint('District: $district');
-    debugPrint('Taluka: $taluka');
-    debugPrint('Village: $village');
-    debugPrint('FPO: $fpo');
+    try {
+      await _farmerApi.registerFarmer(
+        fullName: farmerName,
+        phone: mobile,
+        email: email,
+        address: address,
+        district: district,
+        taluka: taluka,
+        village: village,
+        dateOfBirth: _selectedDob?.toUtc().toIso8601String() ?? _dobController.text,
+        fpo: fpo,
+      );
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Registration form is valid')));
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Registration successful')));
+
+      Navigator.pop(context);
+    } catch (e) {
+      if (!mounted) return;
+      debugPrint('Registration failed: $e');
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Registration failed: $e')));
+    }
+
   }
 
   // ------------------------------------------------------------
@@ -454,6 +472,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}";
 
                       setState(() {
+                        _selectedDob = pickedDate;
                         _dobController.text =
                             formattedDate; // Updates the input box UI
                       });

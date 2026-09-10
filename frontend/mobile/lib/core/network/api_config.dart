@@ -14,4 +14,11 @@ class ApiConfig {
 
   static String verifyFarm(String farmId) =>
       '$baseUrl/api/farms/$farmId/verify';
+
+  static String archiveFarm(String farmId) =>
+      '$baseUrl/api/farms/$farmId/archive';
+
+  static String registerFarmer = '$baseUrl/api/farmers/register';
+
+  static String registerFarm = '$baseUrl/api/farms/register';
 }

@@ -8,7 +8,7 @@ using backend.Data;
 using backend.Features.Auth.Services;
 using backend.Infrastructure.Authentication;
 using backend.Features.Farmers.Services;
-
+using backend.Features.Farms.Services;
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://0.0.0.0:5066");
 // --------------------------------------------------
@@ -71,6 +71,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IOtpService, OtpService>();
 builder.Services.AddScoped<IFarmerService, FarmerService>();
 builder.Services.AddScoped<IFarmerAuthService, FarmerAuthService>();
+builder.Services.AddScoped<IFarmService, FarmService>();
 
 // --------------------------------------------------
 // Controllers & Swagger
@@ -108,6 +109,16 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+// 1. RUN SEEDING FIRST (Before handling any requests)
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider
+        .GetRequiredService<AppDbContext>();
+
+    await DbSeeder.SeedAsync(db);
+}
+
+// 2. CONFIGURE PIPELINE
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -122,17 +133,12 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
+// 3. SECURITY MIDDLEWARE
 app.UseAuthentication();
 app.UseAuthorization();
 
+// 3. SECURITY MIDDLEWARE
 app.MapControllers();
 
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider
-        .GetRequiredService<AppDbContext>();
-
-    await DbSeeder.SeedAsync(db);
-}
 
 app.Run();
