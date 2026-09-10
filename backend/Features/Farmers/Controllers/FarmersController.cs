@@ -56,6 +56,19 @@ public class FarmersController : ControllerBase
             farmer);
     }
 
+    [HttpPost("register")]
+    [AllowAnonymous]
+    public async Task<ActionResult<FarmerResponse>> Register(
+        CreateFarmerRequest request)
+    {
+        var farmer = await _farmerService.CreateAsync(request);
+
+        return CreatedAtAction(
+            nameof(GetById),
+            new { id = farmer.Id },
+            farmer);
+    }
+
     [HttpGet]
     [Authorize(Roles =
     Roles.FpoManager + "," +

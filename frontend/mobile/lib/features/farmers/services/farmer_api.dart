@@ -30,4 +30,55 @@ class FarmerApi {
 
     throw Exception('Failed to load farmer profile.');
   }
+
+  Future<void> registerFarmer({
+    required String fullName,
+    required String phone,
+    required String email,
+    required String address,
+    required String district,
+    required String taluka,
+    required String village,
+    required String dateOfBirth,
+    required String fpo,
+  }) async {
+    String formattedDob = dateOfBirth;
+    if (dateOfBirth.contains('/')) {
+      final parts = dateOfBirth.split('/');
+      if (parts.length == 3) {
+        final day = int.tryParse(parts[0]);
+        final month = int.tryParse(parts[1]);
+        final year = int.tryParse(parts[2]);
+        if (day != null && month != null && year != null) {
+          formattedDob = DateTime.utc(year, month, day).toIso8601String();
+        }
+      }
+    } else if (!dateOfBirth.contains('T') && dateOfBirth.isNotEmpty) {
+      final parsed = DateTime.tryParse(dateOfBirth);
+      if (parsed != null) {
+        formattedDob = parsed.toUtc().toIso8601String();
+      }
+    }
+
+    final response = await _apiClient.post(
+      ApiConfig.registerFarmer,
+      body: {
+        'fullName': fullName,
+        'phone': phone,
+        'email': email,
+        'address': address,
+        'district': district,
+        'taluka': taluka,
+        'village': village,
+        'dateOfBirth': formattedDob,
+        'fpo': fpo,
+      },
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception(
+        'Registration failed: ${response.statusCode} ${response.body}',
+      );
+    }
+  }
 }
